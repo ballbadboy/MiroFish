@@ -13,6 +13,7 @@ from ..services.zep_entity_reader import ZepEntityReader
 from ..services.oasis_profile_generator import OasisProfileGenerator
 from ..services.simulation_manager import SimulationManager, SimulationStatus
 from ..services.simulation_runner import SimulationRunner, RunnerStatus
+from ..services.scenario_branch_manager import ScenarioBranchManager, ScenarioBranch
 from ..utils.logger import get_logger
 from ..utils.locale import t, get_locale, set_locale
 from ..utils.security import safe_id
@@ -2698,3 +2699,126 @@ def close_simulation_env():
             "success": False,
             "error": str(e),
         }), 500
+
+
+# ── Scenario Branching ────────────────────────────────────────────────────────
+
+@simulation_bp.route('/scenarios/experiments', methods=['POST'])
+def create_branch_experiment():
+    """
+    Create a what-if branch experiment from an existing prepared simulation.
+
+    Body
+    ----
+    {
+        "base_simulation_id": "sim_abc123",
+        "branches": [
+            {
+                "name": "Scenario A",
+                "description": "...",
+                "injection": {
+                    "initial_posts": [{"content": "...", "poster_type": "Official"}],
+                    "narrative_direction": "..."
+                }
+            },
+            ...
+        ]
+    }
+    """
+    try:
+        data = request.get_json() or {}
+        base_simulation_id = safe_id(data.get("base_simulation_id", ""))
+        raw_branches = data.get("branches", [])
+
+        if not raw_branches or len(raw_branches) < 2:
+            return jsonify({"success": False, "error": "Provide at least 2 branches."}), 400
+
+        branches = [
+            ScenarioBranch(
+                name=b.get("name", f"Branch {i+1}"),
+                description=b.get("description", ""),
+                injection=b.get("injection", {}),
+            )
+            for i, b in enumerate(raw_branches)
+        ]
+
+        manager = ScenarioBranchManager()
+        manifest = manager.create_branch_experiment(base_simulation_id, branches)
+        return jsonify({"success": True, "data": manifest}), 201
+
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"create_branch_experiment failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@simulation_bp.route('/scenarios/experiments/<experiment_id>/run', methods=['POST'])
+def run_branch_experiment(experiment_id: str):
+    """Start all branches of an experiment in parallel."""
+    try:
+        safe_id(experiment_id)
+        data = request.get_json() or {}
+        platform = data.get("platform", "parallel")
+        max_rounds = data.get("max_rounds")
+
+        manager = ScenarioBranchManager()
+        manifest = manager.run_branch_experiment(
+            experiment_id=experiment_id,
+            platform=platform,
+            max_rounds=max_rounds,
+        )
+        return jsonify({"success": True, "data": manifest})
+
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"run_branch_experiment failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@simulation_bp.route('/scenarios/experiments/<experiment_id>/compare', methods=['GET'])
+def compare_branch_experiment(experiment_id: str):
+    """Return comparison metrics for all branches in the experiment."""
+    try:
+        safe_id(experiment_id)
+        threshold = float(request.args.get("threshold", 0.15))
+
+        manager = ScenarioBranchManager()
+        result = manager.compare_branches(experiment_id, divergence_threshold=threshold)
+        return jsonify({"success": True, "data": result.to_dict()})
+
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"compare_branch_experiment failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@simulation_bp.route('/scenarios/experiments', methods=['GET'])
+def list_branch_experiments():
+    """List all branch experiments (newest first)."""
+    try:
+        manager = ScenarioBranchManager()
+        experiments = manager.list_experiments()
+        return jsonify({"success": True, "data": experiments})
+    except Exception as e:
+        logger.error(f"list_branch_experiments failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@simulation_bp.route('/scenarios/experiments/<experiment_id>', methods=['GET'])
+def get_branch_experiment(experiment_id: str):
+    """Get a single experiment manifest."""
+    try:
+        safe_id(experiment_id)
+        manager = ScenarioBranchManager()
+        manifest = manager.get_experiment(experiment_id)
+        if manifest is None:
+            return jsonify({"success": False, "error": "Experiment not found"}), 404
+        return jsonify({"success": True, "data": manifest})
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"get_branch_experiment failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
