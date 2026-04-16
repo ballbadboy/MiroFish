@@ -668,4 +668,23 @@ onUnmounted(() => {
   .footer-inner { flex-direction: column; align-items: flex-start; }
   .stats-bar { padding: 32px 24px; }
 }
+@media (max-width: 480px) {
+  .navbar { padding: 0 16px; }
+  .sect-inner { padding: 0 16px; }
+  .hero-h1 { font-size: clamp(2.2rem, 10vw, 3.2rem); }
+  .hero-sub { font-size: 0.95rem; }
+  .hero-ctas { flex-direction: column; width: 100%; gap: 12px; }
+  .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+  .hero-stats { width: 100%; }
+  .stat-item { padding: 12px 20px; }
+  .section { padding: 64px 0; }
+  .sect-h2 { font-size: 1.6rem; }
+  .pricing-grid { max-width: 100%; }
+  .cta-h2 { font-size: 1.8rem; }
+  .btn-cta-big { padding: 14px 28px; font-size: 0.9rem; }
+  .footer { padding: 24px 16px; }
+  .footer-nav { flex-wrap: wrap; gap: 16px; }
+  .stats-inner { grid-template-columns: 1fr; }
+  .bar-stat:last-child { border-bottom: none; }
+}
 </style>

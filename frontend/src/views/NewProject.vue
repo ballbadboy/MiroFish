@@ -594,4 +594,11 @@ const handleSubmit = async () => {
   .industry-grid { grid-template-columns: repeat(2, 1fr); }
   .main-grid { padding: 80px 16px 48px; }
 }
+@media (max-width: 480px) {
+  .navbar { padding: 0 16px; }
+  .industry-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .industry-pill { padding: 12px 10px; font-size: 0.82rem; }
+  .submit-btn { font-size: 0.9rem; padding: 14px 20px; }
+  .form-section { padding: 20px; }
+}
 </style>
