@@ -32,6 +32,10 @@
           <span class="dot"></span>
           {{ statusText }}
         </span>
+        <div class="step-divider"></div>
+        <button class="branch-btn" @click="showBranchCreator = true" title="Create what-if branches">
+          ◈ Branch
+        </button>
       </div>
     </header>
 
@@ -65,6 +69,27 @@
         />
       </div>
     </main>
+
+    <!-- Scenario Branch Creator Modal -->
+    <ScenarioBranchCreator
+      :simulation-id="currentSimulationId"
+      :visible="showBranchCreator"
+      @close="showBranchCreator = false"
+      @experiment-created="handleExperimentCreated"
+    />
+
+    <!-- Scenario Comparison Panel (slides in from right when active) -->
+    <Transition name="slide-panel">
+      <div v-if="comparisonData" class="comparison-overlay">
+        <div class="comparison-drawer">
+          <div class="drawer-header">
+            <span class="drawer-title">◈ EXPERIMENT RESULTS</span>
+            <button class="drawer-close" @click="comparisonData = null">×</button>
+          </div>
+          <ScenarioComparisonPanel :experiment-id="activeExperimentId" />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -73,8 +98,10 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GraphPanel from '../components/GraphPanel.vue'
 import Step3Simulation from '../components/Step3Simulation.vue'
+import ScenarioBranchCreator from '../components/ScenarioBranchCreator.vue'
+import ScenarioComparisonPanel from '../components/ScenarioComparisonPanel.vue'
 import { getProject, getGraphData } from '../api/graph'
-import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus } from '../api/simulation'
+import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus, compareBranchExperiment } from '../api/simulation'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -100,6 +127,11 @@ const graphData = ref(null)
 const graphLoading = ref(false)
 const systemLogs = ref([])
 const currentStatus = ref('processing') // processing | completed | error
+
+// Scenario Branching state
+const showBranchCreator = ref(false)
+const activeExperimentId = ref(null)
+const comparisonData = ref(null)
 
 // --- Computed Layout Styles ---
 const leftPanelStyle = computed(() => {
@@ -291,6 +323,14 @@ const stopGraphRefresh = () => {
   }
 }
 
+// ── Scenario Branching ─────────────────────────────────────────────
+const handleExperimentCreated = ({ experimentId, manifest }) => {
+  activeExperimentId.value = experimentId
+  comparisonData.value = manifest
+  showBranchCreator.value = false
+  addLog(`◈ Branch experiment created: ${experimentId} (${manifest.branches?.length || 0} branches)`)
+}
+
 watch(isSimulating, (newValue) => {
   if (newValue) {
     startGraphRefresh()
@@ -476,5 +516,49 @@ onUnmounted(() => {
 .panel-wrapper.left {
   border-right: 1px solid rgba(255,255,255,0.06);
 }
+
+/* Branch button */
+.branch-btn {
+  background: rgba(99,102,241,0.12); color: #a5b4fc;
+  border: 1px solid rgba(99,102,241,0.3); border-radius: 6px;
+  padding: 4px 14px; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.branch-btn:hover {
+  background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.5);
+}
+
+/* Comparison drawer overlay */
+.comparison-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  display: flex; justify-content: flex-end;
+}
+.comparison-drawer {
+  width: 560px; max-width: 90vw; height: 100vh;
+  background: #0d1117; border-left: 1px solid rgba(255,255,255,0.08);
+  overflow-y: auto; padding: 24px;
+}
+.drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.drawer-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  letter-spacing: 0.12em; color: #a5b4fc; font-variant: small-caps;
+}
+.drawer-close {
+  background: none; border: none; color: #888; font-size: 1.4rem;
+  cursor: pointer; transition: color 0.2s;
+}
+.drawer-close:hover { color: #f0f0f0; }
+
+/* Slide panel transition */
+.slide-panel-enter-active { transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.slide-panel-leave-active { transition: all 0.25s ease-in; }
+.slide-panel-enter-from .comparison-drawer { transform: translateX(100%); }
+.slide-panel-leave-to .comparison-drawer { transform: translateX(100%); }
+.slide-panel-enter-from, .slide-panel-leave-to { opacity: 0; }
 </style>
 
