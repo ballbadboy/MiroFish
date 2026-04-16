@@ -13,6 +13,7 @@
       </div>
 
       <div class="nav-right">
+        <a class="nav-link" @click.prevent="router.push('/dashboard')">Dashboard</a>
         <LanguageSwitcher />
         <button class="btn-demo" @click="scrollTo('cta')">Request Demo</button>
       </div>
@@ -112,30 +113,30 @@
           </div>
 
           <!-- Card 4: Real Estate – wide bottom -->
-          <div class="bento-card card-wide card-link" @click="router.push('/new')">
+          <div class="bento-card card-wide card-link" @click="router.push('/industry/real-estate')">
             <div class="card-icon">▣</div>
             <div class="card-tag">DEVELOPERS · BANKS · URBAN PLANNING</div>
             <h3 class="card-title">Real Estate &amp; Urban</h3>
             <p class="card-desc">Identify optimal land parcels, simulate footfall, forecast demand before breaking ground.</p>
-            <span class="card-arrow">Coming Soon</span>
+            <span class="card-arrow">Explore →</span>
           </div>
 
           <!-- Card 5: Environment -->
-          <div class="bento-card card-link" @click="router.push('/new')">
+          <div class="bento-card card-link" @click="router.push('/industry/environment')">
             <div class="card-icon">◉</div>
             <div class="card-tag">ESG · INSURANCE · GOVERNMENT</div>
             <h3 class="card-title">Environment &amp; Climate</h3>
             <p class="card-desc">Model climate impact, simulate community response to ESG policy, forecast carbon credit dynamics.</p>
-            <span class="card-arrow">Coming Soon</span>
+            <span class="card-arrow">Explore →</span>
           </div>
 
           <!-- Card 6: Political -->
-          <div class="bento-card card-link" @click="router.push('/new')">
+          <div class="bento-card card-link" @click="router.push('/industry/politics')">
             <div class="card-icon">◫</div>
             <div class="card-tag">GOV · THINK TANKS · CAMPAIGNS</div>
             <h3 class="card-title">Political &amp; Policy</h3>
             <p class="card-desc">Simulate policy outcomes, model public sentiment shifts, predict election dynamics.</p>
-            <span class="card-arrow">Coming Soon</span>
+            <span class="card-arrow">Explore →</span>
           </div>
         </div>
       </div>
