@@ -12,6 +12,7 @@ import json
 import random
 import time
 from typing import Dict, Any, List, Optional
+import httpx
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -186,16 +187,20 @@ class OasisProfileGenerator:
         zep_api_key: Optional[str] = None,
         graph_id: Optional[str] = None
     ):
-        self.api_key = api_key or Config.LLM_API_KEY
-        self.base_url = base_url or Config.LLM_BASE_URL
-        self.model_name = model_name or Config.LLM_MODEL_NAME
-        
+        # Use the "fast" role config — profile generation is bulk/cheap work.
+        # Override per-call via constructor args if needed.
+        self.api_key = api_key or Config.MODEL_FAST_API_KEY
+        self.base_url = base_url or Config.MODEL_FAST_BASE_URL
+        self.model_name = model_name or Config.MODEL_FAST_NAME
+
         if not self.api_key:
             raise ValueError("LLM_API_KEY 未配置")
-        
+
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=self.base_url
+            base_url=self.base_url,
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0),
+            max_retries=0,
         )
         
         # Zep客户端用于检索丰富上下文

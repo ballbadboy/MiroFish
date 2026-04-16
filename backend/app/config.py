@@ -30,10 +30,32 @@ class Config:
     # JSON配置 - 禁用ASCII转义，让中文直接显示（而不是 \uXXXX 格式）
     JSON_AS_ASCII = False
     
-    # LLM配置（统一使用OpenAI格式）
+    # LLM配置（统一使用OpenAI格式）— default / backward-compat
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
     LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
+
+    # ── Model Roles ──────────────────────────────────────────────────────────
+    # Each role falls back to the default LLM_* values when not explicitly set.
+    #
+    # "strong" — quality-critical tasks: report generation, ontology building
+    #   Set MODEL_STRONG_NAME=gpt-4o or claude-3-5-sonnet-20241022 etc.
+    MODEL_STRONG_API_KEY  = os.environ.get('MODEL_STRONG_API_KEY')  or os.environ.get('LLM_API_KEY')
+    MODEL_STRONG_BASE_URL = os.environ.get('MODEL_STRONG_BASE_URL') or os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
+    MODEL_STRONG_NAME     = os.environ.get('MODEL_STRONG_NAME')     or os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
+
+    # "fast" — bulk / cheap tasks: agent-profile generation, simulation config
+    #   Set MODEL_FAST_NAME=gpt-4o-mini or gemini-1.5-flash etc.
+    MODEL_FAST_API_KEY    = os.environ.get('MODEL_FAST_API_KEY')    or os.environ.get('LLM_API_KEY')
+    MODEL_FAST_BASE_URL   = os.environ.get('MODEL_FAST_BASE_URL')   or os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
+    MODEL_FAST_NAME       = os.environ.get('MODEL_FAST_NAME')       or os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
+
+    # "local" — dev / testing via Ollama (or any OpenAI-compatible local server)
+    #   Set MODEL_LOCAL_NAME=llama3.2 (or whatever model you pulled)
+    MODEL_LOCAL_API_KEY   = os.environ.get('MODEL_LOCAL_API_KEY',  'ollama')
+    MODEL_LOCAL_BASE_URL  = os.environ.get('MODEL_LOCAL_BASE_URL', 'http://localhost:11434/v1')
+    MODEL_LOCAL_NAME      = os.environ.get('MODEL_LOCAL_NAME',     'llama3.2')
+    # ─────────────────────────────────────────────────────────────────────────
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')

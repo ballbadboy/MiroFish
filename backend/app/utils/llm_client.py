@@ -14,7 +14,14 @@ from ..config import Config
 
 class LLMClient:
     """LLM客户端"""
-    
+
+    # Mapping from role name → (api_key_attr, base_url_attr, model_name_attr)
+    _ROLE_CONFIG: Dict[str, tuple] = {
+        "strong": ("MODEL_STRONG_API_KEY", "MODEL_STRONG_BASE_URL", "MODEL_STRONG_NAME"),
+        "fast":   ("MODEL_FAST_API_KEY",   "MODEL_FAST_BASE_URL",   "MODEL_FAST_NAME"),
+        "local":  ("MODEL_LOCAL_API_KEY",  "MODEL_LOCAL_BASE_URL",  "MODEL_LOCAL_NAME"),
+    }
+
     def __init__(
         self,
         api_key: Optional[str] = None,
@@ -24,15 +31,40 @@ class LLMClient:
         self.api_key = api_key or Config.LLM_API_KEY
         self.base_url = base_url or Config.LLM_BASE_URL
         self.model = model or Config.LLM_MODEL_NAME
-        
+
         if not self.api_key:
             raise ValueError("LLM_API_KEY 未配置")
-        
+
         self.client = OpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
             timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0),
             max_retries=0,  # let retry_with_backoff handle retries
+        )
+
+    @classmethod
+    def for_role(cls, role: str) -> "LLMClient":
+        """
+        Factory: return an LLMClient pre-configured for a named model role.
+
+        Roles
+        -----
+        "strong"  Quality-critical tasks — report generation, ontology building.
+                  Set MODEL_STRONG_NAME / MODEL_STRONG_BASE_URL / MODEL_STRONG_API_KEY.
+        "fast"    Bulk / cheap tasks — agent-profile generation, simulation config.
+                  Set MODEL_FAST_NAME / MODEL_FAST_BASE_URL / MODEL_FAST_API_KEY.
+        "local"   Dev / testing via Ollama or any OpenAI-compatible local server.
+                  Set MODEL_LOCAL_NAME / MODEL_LOCAL_BASE_URL / MODEL_LOCAL_API_KEY.
+        other     Falls back to the default LLM_* config (backward compatible).
+        """
+        if role not in cls._ROLE_CONFIG:
+            return cls()
+
+        key_attr, url_attr, name_attr = cls._ROLE_CONFIG[role]
+        return cls(
+            api_key=getattr(Config, key_attr),
+            base_url=getattr(Config, url_attr),
+            model=getattr(Config, name_attr),
         )
     
     def chat(
