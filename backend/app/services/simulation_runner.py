@@ -226,6 +226,9 @@ class SimulationRunner:
     
     # 图谱记忆更新配置
     _graph_memory_enabled: Dict[str, bool] = {}  # simulation_id -> enabled
+
+    # Lock protecting all class-level state dicts from concurrent access
+    _lock: threading.RLock = threading.RLock()
     
     @classmethod
     def get_run_state(cls, simulation_id: str) -> Optional[SimulationRunState]:

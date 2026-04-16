@@ -21,8 +21,11 @@ class Config:
     """Flask配置类"""
     
     # Flask配置
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'mirofish-secret-key')
-    DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    if not SECRET_KEY:
+        # Allow dev mode without setting SECRET_KEY only when DEBUG env is set
+        SECRET_KEY = 'dev-only-insecure-key' if os.environ.get('FLASK_DEBUG', '').lower() == 'true' else None
+    DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     # JSON配置 - 禁用ASCII转义，让中文直接显示（而不是 \uXXXX 格式）
     JSON_AS_ASCII = False
@@ -71,5 +74,7 @@ class Config:
             errors.append("LLM_API_KEY 未配置")
         if not cls.ZEP_API_KEY:
             errors.append("ZEP_API_KEY 未配置")
+        if not cls.SECRET_KEY and not cls.DEBUG:
+            errors.append("SECRET_KEY env var is required in production (set FLASK_DEBUG=True for dev)")
         return errors
 

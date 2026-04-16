@@ -143,10 +143,12 @@ class SimulationIPCClient:
             args=args
         )
         
-        # 写入命令文件
+        # 原子写入命令文件（先写临时文件再重命名）
         command_file = os.path.join(self.commands_dir, f"{command_id}.json")
-        with open(command_file, 'w', encoding='utf-8') as f:
+        tmp_file = command_file + ".tmp"
+        with open(tmp_file, 'w', encoding='utf-8') as f:
             json.dump(command.to_dict(), f, ensure_ascii=False, indent=2)
+        os.replace(tmp_file, command_file)
         
         logger.info(f"发送IPC命令: {command_type.value}, command_id={command_id}")
         
@@ -323,11 +325,13 @@ class SimulationIPCServer:
     def _update_env_status(self, status: str):
         """更新环境状态文件"""
         status_file = os.path.join(self.simulation_dir, "env_status.json")
-        with open(status_file, 'w', encoding='utf-8') as f:
+        tmp_file = status_file + ".tmp"
+        with open(tmp_file, 'w', encoding='utf-8') as f:
             json.dump({
                 "status": status,
                 "timestamp": datetime.now().isoformat()
             }, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_file, status_file)
     
     def poll_commands(self) -> Optional[IPCCommand]:
         """
@@ -367,9 +371,11 @@ class SimulationIPCServer:
             response: IPC响应
         """
         response_file = os.path.join(self.responses_dir, f"{response.command_id}.json")
-        with open(response_file, 'w', encoding='utf-8') as f:
+        tmp_file = response_file + ".tmp"
+        with open(tmp_file, 'w', encoding='utf-8') as f:
             json.dump(response.to_dict(), f, ensure_ascii=False, indent=2)
-        
+        os.replace(tmp_file, response_file)
+
         # 删除命令文件
         command_file = os.path.join(self.commands_dir, f"{response.command_id}.json")
         try:

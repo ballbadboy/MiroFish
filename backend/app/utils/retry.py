@@ -18,7 +18,7 @@ def retry_with_backoff(
     max_delay: float = 30.0,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Tuple[Type[Exception], ...] = (Exception,),
+    exceptions: Tuple[Type[Exception], ...] = (ConnectionError, TimeoutError, OSError),
     on_retry: Optional[Callable[[Exception, int], None]] = None
 ):
     """
@@ -83,7 +83,7 @@ def retry_with_backoff_async(
     max_delay: float = 30.0,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Tuple[Type[Exception], ...] = (Exception,),
+    exceptions: Tuple[Type[Exception], ...] = (ConnectionError, TimeoutError, OSError),
     on_retry: Optional[Callable[[Exception, int], None]] = None
 ):
     """
@@ -150,7 +150,7 @@ class RetryableAPIClient:
         self,
         func: Callable,
         *args,
-        exceptions: Tuple[Type[Exception], ...] = (Exception,),
+        exceptions: Tuple[Type[Exception], ...] = (ConnectionError, TimeoutError, OSError),
         **kwargs
     ) -> Any:
         """

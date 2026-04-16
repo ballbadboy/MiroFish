@@ -6,6 +6,7 @@ LLM客户端封装
 import json
 import re
 from typing import Optional, Dict, Any, List
+import httpx
 from openai import OpenAI
 
 from ..config import Config
@@ -29,7 +30,9 @@ class LLMClient:
         
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=self.base_url
+            base_url=self.base_url,
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0),
+            max_retries=0,  # let retry_with_backoff handle retries
         )
     
     def chat(

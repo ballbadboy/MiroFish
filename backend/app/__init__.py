@@ -39,8 +39,10 @@ def create_app(config_class=Config):
         logger.info("MiroFish Backend 启动中...")
         logger.info("=" * 50)
     
-    # 启用CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Restrict CORS to explicit origins; defaults to localhost for dev
+    cors_origins_raw = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000')
+    cors_origins = [o.strip() for o in cors_origins_raw.split(',') if o.strip()]
+    CORS(app, resources={r"/api/*": {"origins": cors_origins}})
     
     # 注册模拟进程清理函数（确保服务器关闭时终止所有模拟进程）
     from .services.simulation_runner import SimulationRunner
@@ -53,8 +55,6 @@ def create_app(config_class=Config):
     def log_request():
         logger = get_logger('mirofish.request')
         logger.debug(f"请求: {request.method} {request.path}")
-        if request.content_type and 'json' in request.content_type:
-            logger.debug(f"请求体: {request.get_json(silent=True)}")
     
     @app.after_request
     def log_response(response):

@@ -1,29 +1,55 @@
-FROM python:3.11
+FROM python:3.11-slim AS builder
 
-# 安装 Node.js （满足 >=18）及必要工具
+# Install Node.js for frontend build
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends nodejs npm \
+  && apt-get install -y --no-install-recommends curl ca-certificates \
+  && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+  && apt-get install -y --no-install-recommends nodejs \
   && rm -rf /var/lib/apt/lists/*
 
-# 从 uv 官方镜像复制 uv
+# Copy uv
 COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
 
 WORKDIR /app
 
-# 先复制依赖描述文件以利用缓存
+# Install Python dependencies
+COPY backend/pyproject.toml backend/uv.lock ./backend/
+RUN cd backend && uv sync --frozen --no-dev
+
+# Install Node dependencies and build frontend
 COPY package.json package-lock.json ./
 COPY frontend/package.json frontend/package-lock.json ./frontend/
-COPY backend/pyproject.toml backend/uv.lock ./backend/
+RUN npm ci && npm ci --prefix frontend
 
-# 安装依赖（Node + Python）
-RUN npm ci \
-  && npm ci --prefix frontend \
-  && cd backend && uv sync --frozen
-
-# 复制项目源码
 COPY . .
+RUN npm run build --prefix frontend
 
-EXPOSE 3000 5001
+# ─── Runtime stage ────────────────────────────────────────────────────────────
+FROM python:3.11-slim AS runtime
 
-# 同时启动前后端（开发模式）
-CMD ["npm", "run", "dev"]
+# Install gunicorn
+RUN pip install --no-cache-dir gunicorn
+
+# Create non-root user
+RUN useradd -m -u 1000 mirofish
+
+WORKDIR /app
+
+# Copy Python venv and source
+COPY --from=builder /app/backend /app/backend
+COPY --from=builder /app/.venv /app/.venv 2>/dev/null || true
+
+# Copy built frontend (served as static files or by nginx)
+COPY --from=builder /app/frontend/dist /app/frontend/dist
+
+# Set ownership
+RUN chown -R mirofish:mirofish /app
+
+USER mirofish
+
+EXPOSE 5001
+
+ENV PATH="/app/backend/.venv/bin:$PATH"
+
+# Run production WSGI server
+CMD ["sh", "-c", "cd /app/backend && /app/backend/.venv/bin/gunicorn --workers=4 --bind=0.0.0.0:5001 --timeout=120 'app:create_app()'"]

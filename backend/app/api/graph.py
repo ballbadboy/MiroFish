@@ -10,6 +10,7 @@ from flask import request, jsonify
 
 from . import graph_bp
 from ..config import Config
+from ..utils.security import safe_id
 from ..services.ontology_generator import OntologyGenerator
 from ..services.graph_builder import GraphBuilderService
 from ..services.text_processor import TextProcessor
@@ -38,6 +39,7 @@ def get_project(project_id: str):
     """
     获取项目详情
     """
+    project_id = safe_id(project_id, "project_id")
     project = ProjectManager.get_project(project_id)
     
     if not project:
@@ -72,6 +74,7 @@ def delete_project(project_id: str):
     """
     删除项目
     """
+    project_id = safe_id(project_id, "project_id")
     success = ProjectManager.delete_project(project_id)
     
     if not success:
@@ -91,6 +94,7 @@ def reset_project(project_id: str):
     """
     重置项目状态（用于重新构建图谱）
     """
+    project_id = safe_id(project_id, "project_id")
     project = ProjectManager.get_project(project_id)
     
     if not project:
@@ -248,10 +252,10 @@ def generate_ontology():
         })
         
     except Exception as e:
+        logger.exception("内部错误")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "内部服务器错误"
         }), 500
 
 
@@ -505,7 +509,7 @@ def build_graph():
                     task_id,
                     status=TaskStatus.FAILED,
                     message=t('progress.buildFailed', error=str(e)),
-                    error=traceback.format_exc()
+                    error=str(e)
                 )
         
         # 启动后台线程
@@ -522,10 +526,10 @@ def build_graph():
         })
         
     except Exception as e:
+        logger.exception("内部错误")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "内部服务器错误"
         }), 500
 
 
@@ -536,6 +540,7 @@ def get_task(task_id: str):
     """
     查询任务状态
     """
+    task_id = safe_id(task_id, "task_id")
     task = TaskManager().get_task(task_id)
     
     if not task:
@@ -571,6 +576,7 @@ def get_graph_data(graph_id: str):
     """
     获取图谱数据（节点和边）
     """
+    graph_id = safe_id(graph_id, "graph_id")
     try:
         if not Config.ZEP_API_KEY:
             return jsonify({
@@ -580,17 +586,17 @@ def get_graph_data(graph_id: str):
         
         builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
         graph_data = builder.get_graph_data(graph_id)
-        
+
         return jsonify({
             "success": True,
             "data": graph_data
         })
-        
+
     except Exception as e:
+        logger.exception("内部错误")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "内部服务器错误"
         }), 500
 
 
@@ -599,6 +605,7 @@ def delete_graph(graph_id: str):
     """
     删除Zep图谱
     """
+    graph_id = safe_id(graph_id, "graph_id")
     try:
         if not Config.ZEP_API_KEY:
             return jsonify({
@@ -608,15 +615,15 @@ def delete_graph(graph_id: str):
         
         builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
         builder.delete_graph(graph_id)
-        
+
         return jsonify({
             "success": True,
             "message": t('api.graphDeleted', id=graph_id)
         })
-        
+
     except Exception as e:
+        logger.exception("内部错误")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "内部服务器错误"
         }), 500
