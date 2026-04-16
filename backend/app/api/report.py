@@ -4,9 +4,11 @@ Report API路由
 """
 
 import os
+import re
+import html as html_mod
 import traceback
 import threading
-from flask import request, jsonify, send_file
+from flask import request, jsonify, send_file, Response
 
 from . import report_bp
 from ..config import Config
@@ -18,6 +20,210 @@ from ..utils.logger import get_logger
 from ..utils.locale import t, get_locale, set_locale
 
 logger = get_logger('mirofish.api.report')
+
+
+# ============== HTML Export Helpers ==============
+
+def _inline_md(text: str) -> str:
+    """Apply inline markdown transforms to already-HTML-escaped text."""
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+    text = re.sub(r'`(.+?)`', r'<code>\1</code>', text)
+    text = re.sub(r'\[(.+?)\]\((.+?)\)', r'<a href="\2">\1</a>', text)
+    return text
+
+
+def _md_to_html(text: str) -> str:
+    """
+    Lightweight markdown→HTML converter for LLM report output.
+    Handles: fenced code blocks, headings, hr, bold/italic/code,
+    unordered/ordered lists, blockquotes, and paragraphs.
+    """
+    # ── Pass 1: extract fenced code blocks ──────────────────────────────
+    code_blocks: dict[str, str] = {}
+    out_lines: list[str] = []
+    in_code = False
+    code_buf: list[str] = []
+    code_lang = ''
+    code_idx = 0
+
+    for line in text.split('\n'):
+        fence = re.match(r'^```(\w*)$', line.strip())
+        if fence and not in_code:
+            in_code = True
+            code_lang = fence.group(1)
+            code_buf = []
+        elif line.strip() == '```' and in_code:
+            in_code = False
+            placeholder = f'\x00CODE{code_idx}\x00'
+            lang_attr = f' class="language-{code_lang}"' if code_lang else ''
+            escaped = html_mod.escape('\n'.join(code_buf))
+            code_blocks[placeholder] = f'<pre><code{lang_attr}>{escaped}</code></pre>'
+            out_lines.append(placeholder)
+            code_idx += 1
+        elif in_code:
+            code_buf.append(line)
+        else:
+            out_lines.append(line)
+
+    # ── Pass 2: paragraph-level processing ──────────────────────────────
+    paragraphs = re.split(r'\n{2,}', '\n'.join(out_lines))
+    parts: list[str] = []
+
+    ul_re = re.compile(r'^[-*]\s+(.+)$')
+    ol_re = re.compile(r'^\d+\.\s+(.+)$')
+
+    for para in paragraphs:
+        para = para.strip()
+        if not para:
+            continue
+
+        # Code block placeholder (single line)
+        if para in code_blocks:
+            parts.append(code_blocks[para])
+            continue
+
+        para_lines = para.split('\n')
+        first = para_lines[0]
+
+        # Headings (only when the whole paragraph is a single heading line)
+        h_match = re.match(r'^(#{1,4})\s+(.+)$', first) if len(para_lines) == 1 else None
+        if h_match:
+            lvl = len(h_match.group(1))
+            parts.append(f'<h{lvl}>{_inline_md(html_mod.escape(h_match.group(2)))}</h{lvl}>')
+            continue
+
+        # Horizontal rule
+        if len(para_lines) == 1 and re.match(r'^-{3,}$', first):
+            parts.append('<hr>')
+            continue
+
+        # Blockquote
+        if first.startswith('> '):
+            content = ' '.join(l.lstrip('> ') for l in para_lines)
+            parts.append(f'<blockquote><p>{_inline_md(html_mod.escape(content))}</p></blockquote>')
+            continue
+
+        # Unordered list
+        if ul_re.match(first):
+            items = ''.join(
+                f'<li>{_inline_md(html_mod.escape(m.group(1)))}</li>'
+                for line in para_lines
+                if (m := ul_re.match(line))
+            )
+            parts.append(f'<ul>{items}</ul>')
+            continue
+
+        # Ordered list
+        if ol_re.match(first):
+            items = ''.join(
+                f'<li>{_inline_md(html_mod.escape(m.group(1)))}</li>'
+                for line in para_lines
+                if (m := ol_re.match(line))
+            )
+            parts.append(f'<ol>{items}</ol>')
+            continue
+
+        # Regular paragraph (join multi-lines with a space)
+        content = ' '.join(para_lines)
+        parts.append(f'<p>{_inline_md(html_mod.escape(content))}</p>')
+
+    return '\n'.join(parts)
+
+
+_EXPORT_TEMPLATE = """\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE__ — MiroFish Report</title>
+<style>
+:root{--font-body:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;--color-muted:#666;--color-border:#eaeaea;--color-surface:#fafafa;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);color:#0d0d0d;background:#fff;line-height:1.75;font-size:15px;}
+.print-bar{position:fixed;top:0;left:0;right:0;background:#000;color:#fff;padding:10px 32px;display:flex;justify-content:space-between;align-items:center;z-index:100;font-size:11px;font-family:var(--font-mono);letter-spacing:.06em;}
+.print-btn{background:#fff;color:#000;border:none;padding:6px 18px;font-family:var(--font-body);font-size:11px;font-weight:700;cursor:pointer;border-radius:2px;text-transform:uppercase;letter-spacing:.05em;}
+.report-wrapper{max-width:860px;margin:60px auto 80px;padding:0 48px;}
+.report-header{padding:40px 0 32px;border-bottom:2px solid #000;margin-bottom:40px;}
+.report-tag{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-muted);font-family:var(--font-mono);margin-bottom:12px;}
+.report-title{font-size:30px;font-weight:700;line-height:1.25;color:#000;margin-bottom:12px;}
+.report-summary{font-size:16px;color:var(--color-muted);line-height:1.6;max-width:640px;}
+.report-meta{margin-top:20px;display:flex;gap:24px;font-size:11px;font-family:var(--font-mono);color:#999;flex-wrap:wrap;}
+.report-meta strong{color:#333;}
+.report-content h1{font-size:24px;font-weight:700;margin:48px 0 14px;}
+.report-content h2{font-size:20px;font-weight:600;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--color-border);}
+.report-content h3{font-size:17px;font-weight:600;margin:32px 0 10px;}
+.report-content h4{font-size:13px;font-weight:700;margin:24px 0 8px;text-transform:uppercase;letter-spacing:.05em;color:#555;}
+.report-content p{margin-bottom:16px;}
+.report-content ul,.report-content ol{margin:10px 0 18px 28px;}
+.report-content li{margin-bottom:6px;}
+.report-content hr{border:none;border-top:1px solid var(--color-border);margin:32px 0;}
+.report-content blockquote{border-left:3px solid #000;padding:8px 20px;margin:16px 0;background:var(--color-surface);color:#444;}
+.report-content code{font-family:var(--font-mono);font-size:13px;background:#f0f0f0;padding:2px 6px;border-radius:2px;color:#c0392b;}
+.report-content pre{background:#0d0d0d;color:#e0e0e0;padding:20px 24px;border-radius:4px;margin:20px 0;overflow-x:auto;}
+.report-content pre code{background:transparent;color:inherit;padding:0;font-size:13px;}
+.report-content strong{font-weight:600;}
+.report-content em{font-style:italic;color:#555;}
+.report-content a{color:#000;text-decoration:underline;}
+.report-footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--color-border);font-size:10px;font-family:var(--font-mono);color:#bbb;display:flex;justify-content:space-between;}
+@media print{
+  .print-bar{display:none!important;}
+  body{font-size:13px;}
+  .report-wrapper{margin:0;padding:24px 40px;max-width:100%;}
+  .report-content pre{border:1px solid #ddd;background:#f9f9f9;color:#000;}
+  h1,h2,h3,h4{page-break-after:avoid;}
+  p,li{page-break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="print-bar">
+  <span>MIROFISH &nbsp;/&nbsp; __REPORT_ID__</span>
+  <button class="print-btn" onclick="window.print()">&#8595; Save as PDF</button>
+</div>
+<div class="report-wrapper">
+  <header class="report-header">
+    <span class="report-tag">Simulation Analysis Report</span>
+    <h1 class="report-title">__TITLE__</h1>
+    <p class="report-summary">__SUMMARY__</p>
+    <div class="report-meta">
+      <span>ID:&nbsp;<strong>__REPORT_ID__</strong></span>
+      <span>Simulation:&nbsp;<strong>__SIM_ID__</strong></span>
+      <span>Generated:&nbsp;<strong>__GENERATED_AT__</strong></span>
+    </div>
+  </header>
+  <div class="report-content">
+__CONTENT_HTML__
+  </div>
+  <footer class="report-footer">
+    <span>Generated by MiroFish &middot; Multi-Agent Social Simulation</span>
+    <span>__REPORT_ID__</span>
+  </footer>
+</div>
+</body>
+</html>"""
+
+
+def _build_export_html(report) -> str:
+    """Assemble a fully self-contained HTML export from a report object."""
+    outline = report.outline or {}
+    title   = html_mod.escape(str(outline.get('title', report.report_id)))
+    summary = html_mod.escape(str(outline.get('summary', '')))
+    generated_at = str(getattr(report, 'completed_at', None) or
+                       getattr(report, 'created_at', 'N/A'))[:19].replace('T', ' ')
+
+    content_html = _md_to_html(report.markdown_content or '')
+
+    return (
+        _EXPORT_TEMPLATE
+        .replace('__TITLE__', title)
+        .replace('__SUMMARY__', summary)
+        .replace('__REPORT_ID__', html_mod.escape(report.report_id))
+        .replace('__SIM_ID__', html_mod.escape(str(report.simulation_id or '')))
+        .replace('__GENERATED_AT__', html_mod.escape(generated_at))
+        .replace('__CONTENT_HTML__', content_html)
+    )
 
 
 # ============== 报告生成接口 ==============
@@ -430,6 +636,48 @@ def download_report(report_id: str):
         
     except Exception as e:
         logger.error(f"下载报告失败: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e),
+        }), 500
+
+
+@report_bp.route('/<report_id>/export/html', methods=['GET'])
+def export_report_html(report_id: str):
+    """
+    导出报告为独立 HTML 文件（可在浏览器直接打印/存为 PDF）
+
+    返回：自包含的 HTML 文件（text/html）
+    """
+    try:
+        report = ReportManager.get_report(report_id)
+
+        if not report:
+            return jsonify({
+                "success": False,
+                "error": t('api.reportNotFound', id=report_id)
+            }), 404
+
+        if not report.markdown_content:
+            return jsonify({
+                "success": False,
+                "error": "Report content is not yet available"
+            }), 400
+
+        html_content = _build_export_html(report)
+
+        return Response(
+            html_content,
+            status=200,
+            mimetype='text/html',
+            headers={
+                'Content-Disposition': f'attachment; filename="{report_id}.html"',
+                'Content-Type': 'text/html; charset=utf-8',
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"导出报告 HTML 失败: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e),

@@ -185,3 +185,50 @@ export const getSimulationHistory = (limit = 20) => {
   return service.get('/api/simulation/history', { params: { limit } })
 }
 
+// ============================================================
+// Scenario Branching API  (Upgrade #3 — what-if experiments)
+// ============================================================
+
+/**
+ * Create a new branch experiment
+ * @param {Object} data - { base_simulation_id, branches: [{ name, description, injection }] }
+ */
+export const createBranchExperiment = (data) => {
+  return requestWithRetry(() => service.post('/api/scenarios/experiments', data), 3, 1000)
+}
+
+/**
+ * Run a branch experiment (starts parallel simulations)
+ * @param {string} experimentId
+ * @param {Object} data - { platform?, max_rounds? }
+ */
+export const runBranchExperiment = (experimentId, data = {}) => {
+  return service.post(`/api/scenarios/experiments/${experimentId}/run`, data)
+}
+
+/**
+ * Get branch comparison result with divergence analysis
+ * @param {string} experimentId
+ * @param {number} [divergenceThreshold=0.15]
+ */
+export const compareBranchExperiment = (experimentId, divergenceThreshold = 0.15) => {
+  return service.get(`/api/scenarios/experiments/${experimentId}/compare`, {
+    params: { divergence_threshold: divergenceThreshold }
+  })
+}
+
+/**
+ * List all branch experiments
+ */
+export const listBranchExperiments = () => {
+  return service.get('/api/scenarios/experiments')
+}
+
+/**
+ * Get a single experiment by ID
+ * @param {string} experimentId
+ */
+export const getBranchExperiment = (experimentId) => {
+  return service.get(`/api/scenarios/experiments/${experimentId}`)
+}
+

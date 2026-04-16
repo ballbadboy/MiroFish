@@ -49,3 +49,12 @@ export const getReport = (reportId) => {
 export const chatWithReport = (data) => {
   return requestWithRetry(() => service.post('/api/report/chat', data), 3, 1000)
 }
+
+/**
+ * Export report as standalone HTML (open in new tab → browser Print → Save as PDF)
+ * @param {string} reportId
+ * @returns {string} URL to open directly
+ */
+export const getReportExportHtmlUrl = (reportId) => {
+  return `/api/report/${reportId}/export/html`
+}
