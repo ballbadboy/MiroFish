@@ -26,5 +26,9 @@
   "de": {
     "label": "Deutsch",
     "llmInstruction": "Bitte antworten Sie auf Deutsch."
+  },
+  "th": {
+    "label": "ไทย",
+    "llmInstruction": "กรุณาตอบเป็นภาษาไทย"
   }
 }
