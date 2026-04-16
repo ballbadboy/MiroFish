@@ -30,7 +30,8 @@ const routes = [
     component: NewProject,
     meta: {
       title: 'New Simulation — ENDORA',
-      description: 'Configure and launch a new AI agent simulation.'
+      description: 'Configure and launch a new AI agent simulation.',
+      requiresAuth: true
     }
   },
   {
@@ -39,7 +40,8 @@ const routes = [
     component: Dashboard,
     meta: {
       title: 'Dashboard — ENDORA',
-      description: 'View your simulation history, track active runs, and access reports.'
+      description: 'View your simulation history, track active runs, and access reports.',
+      requiresAuth: true
     }
   },
   {
@@ -103,7 +105,8 @@ const routes = [
     props: true,
     meta: {
       title: 'Graph Build — ENDORA',
-      description: 'Step 1: Knowledge graph construction and entity extraction.'
+      description: 'Step 1: Knowledge graph construction and entity extraction.',
+      requiresAuth: true
     }
   },
   {
@@ -113,7 +116,8 @@ const routes = [
     props: true,
     meta: {
       title: 'Env Setup — ENDORA',
-      description: 'Step 2: Environment setup and agent configuration.'
+      description: 'Step 2: Environment setup and agent configuration.',
+      requiresAuth: true
     }
   },
   {
@@ -123,7 +127,8 @@ const routes = [
     props: true,
     meta: {
       title: 'Simulation — ENDORA',
-      description: 'Step 3: Running agent simulation.'
+      description: 'Step 3: Running agent simulation.',
+      requiresAuth: true
     }
   },
   {
@@ -133,7 +138,8 @@ const routes = [
     props: true,
     meta: {
       title: 'Report — ENDORA',
-      description: 'Step 4: Simulation report and analysis.'
+      description: 'Step 4: Simulation report and analysis.',
+      requiresAuth: true
     }
   },
   {
@@ -143,7 +149,8 @@ const routes = [
     props: true,
     meta: {
       title: 'Interaction — ENDORA',
-      description: 'Step 5: Deep interaction with simulated agents.'
+      description: 'Step 5: Deep interaction with simulated agents.',
+      requiresAuth: true
     }
   },
   {
@@ -154,12 +161,38 @@ const routes = [
       title: 'Sign In — ENDORA',
       description: 'Sign in or create an ENDORA account.'
     }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue'),
+    meta: { title: '404 — ENDORA' }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0, behavior: 'smooth' }
+  }
+})
+
+// Auth guard — redirect to /auth if route requires login
+router.beforeEach((to) => {
+  if (to.meta.requiresAuth) {
+    const user = localStorage.getItem('endora_user')
+    if (!user) {
+      return { name: 'Auth', query: { redirect: to.fullPath } }
+    }
+  }
+  // If logged in and visiting /auth, redirect to dashboard
+  if (to.name === 'Auth') {
+    const user = localStorage.getItem('endora_user')
+    if (user) return { name: 'Dashboard' }
+  }
 })
 
 router.afterEach((to) => {

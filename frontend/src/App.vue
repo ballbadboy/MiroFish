@@ -1,5 +1,9 @@
 <template>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <Transition name="page" mode="out-in">
+      <component :is="Component" />
+    </Transition>
+  </router-view>
   <ToastNotification ref="toastRef" />
 </template>
 
@@ -55,5 +59,20 @@ provide('toast', {
 /* 全局按钮样式 */
 button {
   font-family: inherit;
+}
+
+/* Page transition */
+.page-enter-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.page-leave-active {
+  transition: opacity 0.15s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-leave-to {
+  opacity: 0;
 }
 </style>

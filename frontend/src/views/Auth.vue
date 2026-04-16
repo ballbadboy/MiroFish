@@ -178,12 +178,14 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../store/auth'
 
 const router = useRouter()
+const route = useRoute()
 const { login } = useAuth()
 const toast = inject('toast')
+const redirectTo = route.query.redirect || '/dashboard'
 
 const activeTab = ref('login')
 const loading = ref(false)
@@ -212,7 +214,7 @@ function handleLogin() {
     login({ email: loginForm.value.email })
     loading.value = false
     toast?.success('Welcome back to ENDORA')
-    router.push('/dashboard')
+    router.push(redirectTo)
   }, 1500)
 }
 
@@ -238,7 +240,7 @@ function handleRegister() {
     })
     loading.value = false
     toast?.success('Account created — welcome to ENDORA')
-    router.push('/dashboard')
+    router.push(redirectTo)
   }, 1500)
 }
 </script>
