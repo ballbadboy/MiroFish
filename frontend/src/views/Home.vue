@@ -93,22 +93,22 @@
           </div>
 
           <!-- Card 2: Finance – primary, spans 2 cols -->
-          <div class="bento-card card-primary card-wide card-link" @click="router.push('/new')">
+          <div class="bento-card card-primary card-wide card-link" @click="router.push('/industry/finance')">
             <div class="card-primary-badge">PRIMARY VERTICAL</div>
             <div class="card-icon">◈</div>
             <div class="card-tag">B2C · WEALTH MGMT · FINTECH</div>
             <h3 class="card-title">Finance &amp; Investment</h3>
             <p class="card-desc">Model investor sentiment, simulate market scenarios, give individuals institutional-grade intelligence.</p>
-            <span class="card-arrow">Start Simulation →</span>
+            <span class="card-arrow">Explore →</span>
           </div>
 
           <!-- Card 3: Defense -->
-          <div class="bento-card card-link" @click="router.push('/new')">
+          <div class="bento-card card-link" @click="router.push('/industry/defense')">
             <div class="card-icon">⬡</div>
             <div class="card-tag">INTEL · OSINT · WARGAMING</div>
             <h3 class="card-title">Defense &amp; Security</h3>
             <p class="card-desc">Wargame scenarios before deployment. Simulate narrative warfare, threat propagation, and strategic outcomes.</p>
-            <span class="card-arrow">Coming Soon</span>
+            <span class="card-arrow">Explore →</span>
           </div>
 
           <!-- Card 4: Real Estate – wide bottom -->
