@@ -36,7 +36,7 @@
         </p>
 
         <div class="hero-ctas">
-          <a href="#industries" class="btn-primary" @click.prevent="scrollTo('industries')">
+          <a href="/new" class="btn-primary" @click.prevent="router.push('/new')">
             Start Simulation <span class="btn-arrow">→</span>
           </a>
           <button class="btn-ghost">Watch Demo</button>
