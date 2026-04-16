@@ -1,0 +1,58 @@
+services:
+  # ── Nginx: static frontend + reverse proxy ──────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: endora-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - frontend_dist:/usr/share/nginx/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+
+  # ── Backend: Flask API + Gunicorn ───────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: endora-backend
+    env_file:
+      - .env
+    expose:
+      - "5001"
+    volumes:
+      - endora_uploads:/app/backend/uploads
+      - frontend_dist:/app/frontend/dist
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/api/graph/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  endora_uploads:
+  frontend_dist:
