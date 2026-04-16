@@ -1,16 +1,16 @@
 services:
-  mirofish:
-    image: ghcr.io/666ghj/mirofish:latest
+  endora:
+    image: ghcr.io/666ghj/endora:latest
     # 加速镜像（如拉取缓慢可替换上方地址）
-    # image: ghcr.nju.edu.cn/666ghj/mirofish:latest
-    container_name: mirofish
+    # image: ghcr.nju.edu.cn/666ghj/endora:latest
+    container_name: endora
     env_file:
       - .env
     ports:
       - "5001:5001"
     restart: unless-stopped
     volumes:
-      - mirofish_uploads:/app/backend/uploads
+      - endora_uploads:/app/backend/uploads
     deploy:
       resources:
         limits:
@@ -21,4 +21,4 @@ services:
     read_only: false  # uploads dir needs writes
 
 volumes:
-  mirofish_uploads:
+  endora_uploads:

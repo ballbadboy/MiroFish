@@ -31,7 +31,7 @@ FROM python:3.11-slim AS runtime
 RUN pip install --no-cache-dir gunicorn
 
 # Create non-root user
-RUN useradd -m -u 1000 mirofish
+RUN useradd -m -u 1000 endora
 
 WORKDIR /app
 
@@ -43,9 +43,9 @@ COPY --from=builder /app/.venv /app/.venv 2>/dev/null || true
 COPY --from=builder /app/frontend/dist /app/frontend/dist
 
 # Set ownership
-RUN chown -R mirofish:mirofish /app
+RUN chown -R endora:endora /app
 
-USER mirofish
+USER endora
 
 EXPOSE 5001
 

@@ -30,7 +30,7 @@ from ..utils.logger import get_logger
 from ..utils.security import safe_id
 from .simulation_runner import SimulationRunner, RunnerStatus
 
-logger = get_logger("mirofish.scenario_branch")
+logger = get_logger("endora.scenario_branch")
 
 # Positive action types used to compute per-round sentiment ratio
 _POSITIVE_ACTIONS = {"CREATE_POST", "LIKE_POST", "LIKE_COMMENT", "FOLLOW", "QUOTE_POST"}
