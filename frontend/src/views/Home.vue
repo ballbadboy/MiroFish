@@ -181,6 +181,73 @@
       </div>
     </div>
 
+    <!-- ── Pricing ──────────────────────────────────── -->
+    <section id="pricing" class="section sect-mid">
+      <div class="sect-inner">
+        <div class="sect-label">◈ PRICING</div>
+        <h2 class="sect-h2">Intelligence at Every Scale</h2>
+        <p class="sect-desc">Start free. Scale as your predictions do.</p>
+
+        <div class="pricing-grid">
+          <!-- Starter -->
+          <div class="pricing-card">
+            <div class="plan-tier">STARTER</div>
+            <div class="plan-price"><span class="price-val">Free</span></div>
+            <div class="plan-desc">For researchers and individual analysts exploring simulation.</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span> 3 simulations / month</li>
+              <li><span class="feat-check">✓</span> Up to 10,000 agents</li>
+              <li><span class="feat-check">✓</span> Healthcare &amp; Finance verticals</li>
+              <li><span class="feat-check">✓</span> PDF / TXT upload</li>
+              <li><span class="feat-muted">—</span> Custom personas</li>
+              <li><span class="feat-muted">—</span> API access</li>
+            </ul>
+            <button class="plan-btn plan-btn-ghost" @click="router.push('/new')">Get Started Free</button>
+          </div>
+
+          <!-- Pro (highlighted) -->
+          <div class="pricing-card pricing-card-pro">
+            <div class="plan-badge">MOST POPULAR</div>
+            <div class="plan-tier">PRO</div>
+            <div class="plan-price">
+              <span class="price-val">$299</span>
+              <span class="price-period">/ month</span>
+            </div>
+            <div class="plan-desc">For teams running recurring simulations across multiple verticals.</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span> 30 simulations / month</li>
+              <li><span class="feat-check">✓</span> Up to 1,000,000 agents</li>
+              <li><span class="feat-check">✓</span> All 6 industry verticals</li>
+              <li><span class="feat-check">✓</span> Custom persona injection</li>
+              <li><span class="feat-check">✓</span> Scenario branching</li>
+              <li><span class="feat-muted">—</span> Dedicated support</li>
+            </ul>
+            <button class="plan-btn plan-btn-primary" @click="scrollTo('cta')">Start Pro Trial →</button>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="pricing-card">
+            <div class="plan-tier">ENTERPRISE</div>
+            <div class="plan-price"><span class="price-val">Custom</span></div>
+            <div class="plan-desc">For hospitals, governments, financial institutions, and defense contractors.</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span> Unlimited simulations</li>
+              <li><span class="feat-check">✓</span> 10M+ agents per run</li>
+              <li><span class="feat-check">✓</span> On-premise deployment</li>
+              <li><span class="feat-check">✓</span> Custom LLM fine-tuning</li>
+              <li><span class="feat-check">✓</span> SLA &amp; dedicated infra</li>
+              <li><span class="feat-check">✓</span> 24/7 priority support</li>
+            </ul>
+            <button class="plan-btn plan-btn-ghost" @click="scrollTo('cta')">Contact Sales →</button>
+          </div>
+        </div>
+
+        <div class="pricing-note">
+          All plans include: end-to-end encryption · GDPR compliant · SOC 2 Type II (in progress)
+        </div>
+      </div>
+    </section>
+
     <!-- ── CTA ────────────────────────────────────────── -->
     <section id="cta" class="section sect-dark cta-section">
       <div class="sect-inner cta-inner">
@@ -192,7 +259,7 @@
     </section>
 
     <!-- ── Footer ─────────────────────────────────────── -->
-    <footer id="pricing" class="footer">
+    <footer class="footer">
       <div class="footer-inner">
         <div class="footer-left">
           <span class="footer-wordmark">ENDORA</span>
@@ -518,6 +585,67 @@ onUnmounted(() => {
 .footer-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.2s; }
 .footer-link:hover { color: var(--text); }
 
+/* Pricing */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.pricing-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.pricing-card:hover { border-color: rgba(99,102,241,0.3); transform: translateY(-2px); }
+.pricing-card-pro {
+  border-color: rgba(99,102,241,0.5);
+  background: rgba(99,102,241,0.04);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.15), 0 0 48px rgba(99,102,241,0.1);
+}
+.plan-badge {
+  font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em;
+  color: var(--accent-lt); background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3); border-radius: 4px;
+  padding: 3px 10px; align-self: flex-start;
+}
+.plan-tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--muted); }
+.plan-price { display: flex; align-items: baseline; gap: 6px; }
+.price-val { font-size: 2.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; }
+.price-period { font-size: 0.88rem; color: var(--muted); }
+.plan-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+.plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.plan-features li { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--text); }
+.feat-check { color: var(--accent-lt); font-size: 0.8rem; flex-shrink: 0; }
+.feat-muted { color: #333; flex-shrink: 0; }
+.plan-features li:has(.feat-muted) { color: var(--muted); opacity: 0.5; }
+.plan-btn {
+  width: 100%; padding: 12px 20px; border-radius: 8px; font-family: var(--sans);
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s; margin-top: 8px;
+}
+.plan-btn-primary {
+  background: var(--accent); color: #fff; border: none;
+  box-shadow: 0 0 24px rgba(99,102,241,0.35);
+}
+.plan-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 0 36px rgba(99,102,241,0.5); }
+.plan-btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-str);
+}
+.plan-btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+.pricing-note {
+  text-align: center; margin-top: 40px;
+  font-family: var(--mono); font-size: 0.72rem;
+  color: var(--muted); letter-spacing: 0.05em; opacity: 0.6;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .navbar, .sect-inner { padding: 0 24px; }
@@ -529,6 +657,7 @@ onUnmounted(() => {
   .ts-connector { display: none; }
   .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   .bar-stat { border-right: none; padding: 0; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
 }
 @media (max-width: 640px) {
   .hero-stats { flex-direction: column; border: none; background: transparent; }
