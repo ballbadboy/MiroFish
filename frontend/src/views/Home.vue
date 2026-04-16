@@ -84,52 +84,58 @@
 
         <div class="bento-grid">
           <!-- Card 1: Healthcare – top-left tall -->
-          <div class="bento-card card-tall">
+          <div class="bento-card card-tall card-link" @click="router.push('/industry/healthcare')">
             <div class="card-icon">⚕</div>
             <div class="card-tag">HOSPITALS · CLINICS · PHARMA</div>
             <h3 class="card-title">Healthcare &amp; Medical</h3>
             <p class="card-desc">Simulate patient flows, predict disease spread, optimize hospital operations. From ER triage to epidemic modeling.</p>
+            <span class="card-arrow">Explore →</span>
           </div>
 
           <!-- Card 2: Finance – primary, spans 2 cols -->
-          <div class="bento-card card-primary card-wide">
+          <div class="bento-card card-primary card-wide card-link" @click="router.push('/new')">
             <div class="card-primary-badge">PRIMARY VERTICAL</div>
             <div class="card-icon">◈</div>
             <div class="card-tag">B2C · WEALTH MGMT · FINTECH</div>
             <h3 class="card-title">Finance &amp; Investment</h3>
             <p class="card-desc">Model investor sentiment, simulate market scenarios, give individuals institutional-grade intelligence.</p>
+            <span class="card-arrow">Start Simulation →</span>
           </div>
 
           <!-- Card 3: Defense -->
-          <div class="bento-card">
+          <div class="bento-card card-link" @click="router.push('/new')">
             <div class="card-icon">⬡</div>
             <div class="card-tag">INTEL · OSINT · WARGAMING</div>
             <h3 class="card-title">Defense &amp; Security</h3>
             <p class="card-desc">Wargame scenarios before deployment. Simulate narrative warfare, threat propagation, and strategic outcomes.</p>
+            <span class="card-arrow">Coming Soon</span>
           </div>
 
           <!-- Card 4: Real Estate – wide bottom -->
-          <div class="bento-card card-wide">
+          <div class="bento-card card-wide card-link" @click="router.push('/new')">
             <div class="card-icon">▣</div>
             <div class="card-tag">DEVELOPERS · BANKS · URBAN PLANNING</div>
             <h3 class="card-title">Real Estate &amp; Urban</h3>
             <p class="card-desc">Identify optimal land parcels, simulate footfall, forecast demand before breaking ground.</p>
+            <span class="card-arrow">Coming Soon</span>
           </div>
 
           <!-- Card 5: Environment -->
-          <div class="bento-card">
+          <div class="bento-card card-link" @click="router.push('/new')">
             <div class="card-icon">◉</div>
             <div class="card-tag">ESG · INSURANCE · GOVERNMENT</div>
             <h3 class="card-title">Environment &amp; Climate</h3>
             <p class="card-desc">Model climate impact, simulate community response to ESG policy, forecast carbon credit dynamics.</p>
+            <span class="card-arrow">Coming Soon</span>
           </div>
 
           <!-- Card 6: Political -->
-          <div class="bento-card">
+          <div class="bento-card card-link" @click="router.push('/new')">
             <div class="card-icon">◫</div>
             <div class="card-tag">GOV · THINK TANKS · CAMPAIGNS</div>
             <h3 class="card-title">Political &amp; Policy</h3>
             <p class="card-desc">Simulate policy outcomes, model public sentiment shifts, predict election dynamics.</p>
+            <span class="card-arrow">Coming Soon</span>
           </div>
         </div>
       </div>
@@ -528,6 +534,13 @@ onUnmounted(() => {
 .card-tag  { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; }
 .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 0; }
 .card-desc  { font-size: 0.88rem; color: var(--muted); line-height: 1.65; margin: 0; }
+.card-link { cursor: pointer; }
+.card-arrow {
+  font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em;
+  color: var(--accent-lt); margin-top: auto; padding-top: 8px;
+  opacity: 0; transition: opacity 0.25s, transform 0.25s; transform: translateX(-4px);
+}
+.card-link:hover .card-arrow { opacity: 1; transform: translateX(0); }
 
 /* Timeline */
 .timeline { display: flex; position: relative; }
