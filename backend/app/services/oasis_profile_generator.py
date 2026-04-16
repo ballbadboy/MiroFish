@@ -52,7 +52,26 @@ class OasisAgentProfile:
     country: Optional[str] = None
     profession: Optional[str] = None
     interested_topics: List[str] = field(default_factory=list)
-    
+
+    # ── Richer Psychology Model ───────────────────────────────────────────────
+    # Big Five (OCEAN) — continuous scores 0.0–1.0; more simulation-accurate
+    # than MBTI because agents can be calibrated on a spectrum, not buckets.
+    big_five: Optional[Dict[str, float]] = None
+    # e.g. {"openness": 0.8, "conscientiousness": 0.6, "extraversion": 0.4,
+    #        "agreeableness": 0.7, "neuroticism": 0.3}
+
+    # Cognitive biases active in this agent (drives irrational behaviour)
+    cognitive_biases: List[str] = field(default_factory=list)
+    # e.g. ["confirmation_bias", "loss_aversion"]
+
+    # Emotional baseline: -1.0 (extreme pessimist) → 0.0 (neutral) → 1.0 (optimist)
+    emotional_baseline: Optional[float] = None
+
+    # Trust in authority / official sources: 0.0 (distrustful) → 1.0 (highly trusting)
+    # Critical for health-policy and crisis simulations.
+    trust_in_authority: Optional[float] = None
+    # ─────────────────────────────────────────────────────────────────────────
+
     # 来源实体信息
     source_entity_uuid: Optional[str] = None
     source_entity_type: Optional[str] = None
@@ -84,9 +103,17 @@ class OasisAgentProfile:
             profile["profession"] = self.profession
         if self.interested_topics:
             profile["interested_topics"] = self.interested_topics
-        
+        if self.big_five:
+            profile["big_five"] = self.big_five
+        if self.cognitive_biases:
+            profile["cognitive_biases"] = self.cognitive_biases
+        if self.emotional_baseline is not None:
+            profile["emotional_baseline"] = self.emotional_baseline
+        if self.trust_in_authority is not None:
+            profile["trust_in_authority"] = self.trust_in_authority
+
         return profile
-    
+
     def to_twitter_format(self) -> Dict[str, Any]:
         """转换为Twitter平台格式"""
         profile = {
@@ -114,9 +141,17 @@ class OasisAgentProfile:
             profile["profession"] = self.profession
         if self.interested_topics:
             profile["interested_topics"] = self.interested_topics
-        
+        if self.big_five:
+            profile["big_five"] = self.big_five
+        if self.cognitive_biases:
+            profile["cognitive_biases"] = self.cognitive_biases
+        if self.emotional_baseline is not None:
+            profile["emotional_baseline"] = self.emotional_baseline
+        if self.trust_in_authority is not None:
+            profile["trust_in_authority"] = self.trust_in_authority
+
         return profile
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """转换为完整字典格式"""
         return {
@@ -135,6 +170,10 @@ class OasisAgentProfile:
             "country": self.country,
             "profession": self.profession,
             "interested_topics": self.interested_topics,
+            "big_five": self.big_five,
+            "cognitive_biases": self.cognitive_biases,
+            "emotional_baseline": self.emotional_baseline,
+            "trust_in_authority": self.trust_in_authority,
             "source_entity_uuid": self.source_entity_uuid,
             "source_entity_type": self.source_entity_type,
             "created_at": self.created_at,
@@ -274,6 +313,10 @@ class OasisProfileGenerator:
             country=profile_data.get("country"),
             profession=profile_data.get("profession"),
             interested_topics=profile_data.get("interested_topics", []),
+            big_five=profile_data.get("big_five"),
+            cognitive_biases=profile_data.get("cognitive_biases", []),
+            emotional_baseline=profile_data.get("emotional_baseline"),
+            trust_in_authority=profile_data.get("trust_in_authority"),
             source_entity_uuid=entity.uuid,
             source_entity_type=entity_type,
         )
@@ -719,6 +762,18 @@ class OasisProfileGenerator:
 6. country: 国家（使用中文，如"中国"）
 7. profession: 职业
 8. interested_topics: 感兴趣话题数组
+9. big_five: Big Five人格评分对象，包含5个子字段（均为0.0-1.0的浮点数）:
+   - openness: 开放性（好奇心、创造力、新体验接受度）
+   - conscientiousness: 尽责性（自律、计划性、可靠性）
+   - extraversion: 外向性（社交活跃度、主导性、积极情绪）
+   - agreeableness: 宜人性（合作、信任、利他主义）
+   - neuroticism: 神经质（情绪不稳定性、焦虑倾向）
+10. cognitive_biases: 认知偏差数组（2-4个），从以下选择:
+    "confirmation_bias"（确认偏误）, "loss_aversion"（损失厌恶）, "anchoring_bias"（锚定效应）,
+    "in_group_bias"（内群体偏见）, "authority_bias"（权威偏见）, "optimism_bias"（乐观偏见）,
+    "pessimism_bias"（悲观偏见）, "recency_bias"（近因效应）, "sunk_cost_fallacy"（沉没成本谬误）
+11. emotional_baseline: 情绪基准值，-1.0（极度悲观）到1.0（极度乐观）的浮点数
+12. trust_in_authority: 对权威/官方信息的信任度，0.0（完全不信任）到1.0（高度信任）的浮点数
 
 重要:
 - 所有字段值必须是字符串或数字，不要使用换行符
@@ -726,6 +781,9 @@ class OasisProfileGenerator:
 - {get_language_instruction()} (gender字段必须用英文male/female)
 - 内容要与实体信息保持一致
 - age必须是有效的整数，gender必须是"male"或"female"
+- big_five的每个子字段必须是0.0到1.0之间的浮点数
+- emotional_baseline必须是-1.0到1.0之间的浮点数
+- trust_in_authority必须是0.0到1.0之间的浮点数
 """
 
     def _build_group_persona_prompt(
@@ -768,13 +826,25 @@ class OasisProfileGenerator:
 6. country: 国家（使用中文，如"中国"）
 7. profession: 机构职能描述
 8. interested_topics: 关注领域数组
+9. big_five: 机构沟通风格的Big Five评分（0.0-1.0），包含:
+   - openness: 创新开放度（是否接受新观点/变革）
+   - conscientiousness: 规范严谨度（流程规范、准确性要求）
+   - extraversion: 传播主动性（主动发声频率）
+   - agreeableness: 协作包容度（对外合作态度）
+   - neuroticism: 应激反应度（危机/负面事件敏感度）
+10. cognitive_biases: 机构决策常见偏差（1-3个），从以下选择:
+    "authority_bias", "in_group_bias", "confirmation_bias",
+    "sunk_cost_fallacy", "anchoring_bias", "recency_bias"
+11. emotional_baseline: 机构整体基调，-1.0（危机/负面）到1.0（乐观/正面）
+12. trust_in_authority: 对上级/政府机构的遵从度，0.0到1.0
 
 重要:
 - 所有字段值必须是字符串或数字，不允许null值
 - persona必须是一段连贯的文字描述，不要使用换行符
 - {get_language_instruction()} (gender字段必须用英文"other")
 - age必须是整数30，gender必须是字符串"other"
-- 机构账号发言要符合其身份定位"""
+- 机构账号发言要符合其身份定位
+- big_five各字段、emotional_baseline、trust_in_authority均为浮点数"""
     
     def _generate_profile_rule_based(
         self,
