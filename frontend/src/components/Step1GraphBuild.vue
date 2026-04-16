@@ -14,7 +14,7 @@
             <span v-else class="badge pending">{{ $t('step1.ontologyPending') }}</span>
           </div>
         </div>
-        
+
         <div class="card-content">
           <p class="api-note">POST /api/graph/ontology/generate</p>
           <p class="description">
@@ -38,7 +38,7 @@
             </div>
             <div class="detail-body">
                <div class="detail-desc">{{ selectedOntologyItem.description }}</div>
-               
+
                <!-- Attributes -->
                <div class="detail-section" v-if="selectedOntologyItem.attributes?.length">
                   <span class="section-label">ATTRIBUTES</span>
@@ -77,9 +77,9 @@
           <div v-if="projectData?.ontology?.entity_types" class="tags-container" :class="{ 'dimmed': selectedOntologyItem }">
             <span class="tag-label">GENERATED ENTITY TYPES</span>
             <div class="tags-list">
-              <span 
-                v-for="entity in projectData.ontology.entity_types" 
-                :key="entity.name" 
+              <span
+                v-for="entity in projectData.ontology.entity_types"
+                :key="entity.name"
                 class="entity-tag clickable"
                 @click="selectOntologyItem(entity, 'entity')"
               >
@@ -92,9 +92,9 @@
           <div v-if="projectData?.ontology?.edge_types" class="tags-container" :class="{ 'dimmed': selectedOntologyItem }">
             <span class="tag-label">GENERATED RELATION TYPES</span>
             <div class="tags-list">
-              <span 
-                v-for="rel in projectData.ontology.edge_types" 
-                :key="rel.name" 
+              <span
+                v-for="rel in projectData.ontology.edge_types"
+                :key="rel.name"
                 class="entity-tag clickable"
                 @click="selectOntologyItem(rel, 'relation')"
               >
@@ -124,7 +124,7 @@
           <p class="description">
             {{ $t('step1.graphRagDesc') }}
           </p>
-          
+
           <!-- Stats Cards -->
           <div class="stats-grid">
             <div class="stat-card">
@@ -154,12 +154,12 @@
             <span v-if="currentPhase >= 2" class="badge accent">{{ $t('step1.inProgress') }}</span>
           </div>
         </div>
-        
+
         <div class="card-content">
           <p class="api-note">POST /api/simulation/create</p>
           <p class="description">{{ $t('step1.buildCompleteDesc') }}</p>
-          <button 
-            class="action-btn" 
+          <button
+            class="action-btn"
             :disabled="currentPhase < 2 || creatingSimulation"
             @click="handleEnterEnvSetup"
           >
@@ -216,9 +216,9 @@ const handleEnterEnvSetup = async () => {
     console.error('缺少项目或图谱信息')
     return
   }
-  
+
   creatingSimulation.value = true
-  
+
   try {
     const res = await createSimulation({
       project_id: props.projectData.project_id,
@@ -226,7 +226,7 @@ const handleEnterEnvSetup = async () => {
       enable_twitter: true,
       enable_reddit: true
     })
-    
+
     if (res.success && res.data?.simulation_id) {
       // 跳转到 simulation 页面
       router.push({
@@ -275,7 +275,7 @@ watch(() => props.systemLogs.length, () => {
 <style scoped>
 .workbench-panel {
   height: 100%;
-  background-color: #FAFAFA;
+  background-color: #080c12;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -292,18 +292,18 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .step-card {
-  background: #FFF;
+  background: #0d1117;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  border: 1px solid #EAEAEA;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.24);
+  border: 1px solid rgba(255,255,255,0.07);
   transition: all 0.3s ease;
   position: relative; /* For absolute overlay */
 }
 
 .step-card.active {
-  border-color: #FF5722;
-  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.08);
+  border-color: #f97316;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.12);
 }
 
 .card-header {
@@ -323,18 +323,19 @@ watch(() => props.systemLogs.length, () => {
   font-family: 'JetBrains Mono', monospace;
   font-size: 20px;
   font-weight: 700;
-  color: #E0E0E0;
+  color: rgba(255,255,255,0.12);
 }
 
 .step-card.active .step-num,
 .step-card.completed .step-num {
-  color: #000;
+  color: #f0f0f0;
 }
 
 .step-title {
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.5px;
+  color: #f0f0f0;
 }
 
 .badge {
@@ -345,21 +346,21 @@ watch(() => props.systemLogs.length, () => {
   text-transform: uppercase;
 }
 
-.badge.success { background: #E8F5E9; color: #2E7D32; }
-.badge.processing { background: #FF5722; color: #FFF; }
-.badge.accent { background: #FF5722; color: #FFF; }
-.badge.pending { background: #F5F5F5; color: #999; }
+.badge.success { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.badge.processing { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+.badge.accent { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+.badge.pending { background: rgba(255,255,255,0.05); color: #666; border: 1px solid rgba(255,255,255,0.07); }
 
 .api-note {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: #999;
+  color: #666;
   margin-bottom: 8px;
 }
 
 .description {
   font-size: 12px;
-  color: #666;
+  color: #a0a0b0;
   line-height: 1.5;
   margin-bottom: 16px;
 }
@@ -378,7 +379,7 @@ watch(() => props.systemLogs.length, () => {
 .tag-label {
   display: block;
   font-size: 10px;
-  color: #AAA;
+  color: #666;
   margin-bottom: 8px;
   font-weight: 600;
 }
@@ -390,12 +391,12 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .entity-tag {
-  background: #F5F5F5;
-  border: 1px solid #EEE;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 11px;
-  color: #333;
+  color: #a0a0b0;
   font-family: 'JetBrains Mono', monospace;
   transition: all 0.2s;
 }
@@ -405,8 +406,9 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .entity-tag.clickable:hover {
-    background: #E0E0E0;
-    border-color: #CCC;
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.15);
+    color: #f0f0f0;
 }
 
 /* Ontology Detail Overlay */
@@ -416,11 +418,11 @@ watch(() => props.systemLogs.length, () => {
     left: 20px;
     right: 20px;
     bottom: 20px;
-    background: rgba(255, 255, 255, 0.98);
+    background: rgba(13,17,23,0.98);
     backdrop-filter: blur(4px);
     z-index: 10;
-    border: 1px solid #EAEAEA;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     border-radius: 6px;
     display: flex;
     flex-direction: column;
@@ -435,8 +437,8 @@ watch(() => props.systemLogs.length, () => {
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    border-bottom: 1px solid #EAEAEA;
-    background: #FAFAFA;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.03);
 }
 
 .detail-title-group {
@@ -448,8 +450,9 @@ watch(() => props.systemLogs.length, () => {
 .detail-type-badge {
     font-size: 9px;
     font-weight: 700;
-    color: #FFF;
-    background: #000;
+    color: #f0f0f0;
+    background: rgba(99,102,241,0.25);
+    border: 1px solid rgba(99,102,241,0.4);
     padding: 2px 6px;
     border-radius: 2px;
     text-transform: uppercase;
@@ -459,19 +462,20 @@ watch(() => props.systemLogs.length, () => {
     font-size: 14px;
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
+    color: #f0f0f0;
 }
 
 .close-btn {
     background: none;
     border: none;
     font-size: 18px;
-    color: #999;
+    color: #666;
     cursor: pointer;
     line-height: 1;
 }
 
 .close-btn:hover {
-    color: #333;
+    color: #f0f0f0;
 }
 
 .detail-body {
@@ -482,11 +486,11 @@ watch(() => props.systemLogs.length, () => {
 
 .detail-desc {
     font-size: 12px;
-    color: #444;
+    color: #a0a0b0;
     line-height: 1.5;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px dashed #EAEAEA;
+    border-bottom: 1px dashed rgba(255,255,255,0.07);
 }
 
 .detail-section {
@@ -497,7 +501,7 @@ watch(() => props.systemLogs.length, () => {
     display: block;
     font-size: 10px;
     font-weight: 600;
-    color: #AAA;
+    color: #666;
     margin-bottom: 8px;
 }
 
@@ -514,23 +518,23 @@ watch(() => props.systemLogs.length, () => {
     gap: 6px;
     align-items: baseline;
     padding: 4px;
-    background: #F9F9F9;
+    background: rgba(255,255,255,0.03);
     border-radius: 4px;
 }
 
 .attr-name {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
-    color: #000;
+    color: #f0f0f0;
 }
 
 .attr-type {
-    color: #999;
+    color: #666;
     font-size: 10px;
 }
 
 .attr-desc {
-    color: #555;
+    color: #a0a0b0;
     flex: 1;
     min-width: 150px;
 }
@@ -543,11 +547,11 @@ watch(() => props.systemLogs.length, () => {
 
 .example-tag {
     font-size: 11px;
-    background: #FFF;
-    border: 1px solid #E0E0E0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
     padding: 3px 8px;
     border-radius: 12px;
-    color: #555;
+    color: #a0a0b0;
 }
 
 .conn-item {
@@ -556,18 +560,18 @@ watch(() => props.systemLogs.length, () => {
     gap: 8px;
     font-size: 11px;
     padding: 6px;
-    background: #F5F5F5;
+    background: rgba(255,255,255,0.03);
     border-radius: 4px;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .conn-node {
     font-weight: 600;
-    color: #333;
+    color: #a0a0b0;
 }
 
 .conn-arrow {
-    color: #BBB;
+    color: rgba(255,255,255,0.2);
 }
 
 /* Step 02 Stats */
@@ -575,7 +579,7 @@ watch(() => props.systemLogs.length, () => {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
-  background: #F9F9F9;
+  background: rgba(255,255,255,0.03);
   padding: 16px;
   border-radius: 6px;
 }
@@ -588,13 +592,13 @@ watch(() => props.systemLogs.length, () => {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  color: #000;
+  color: #f0f0f0;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .stat-label {
   font-size: 9px;
-  color: #999;
+  color: #666;
   text-transform: uppercase;
   margin-top: 4px;
   display: block;
@@ -603,8 +607,8 @@ watch(() => props.systemLogs.length, () => {
 /* Step 03 Button */
 .action-btn {
   width: 100%;
-  background: #000;
-  color: #FFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border: none;
   padding: 14px;
   border-radius: 4px;
@@ -615,11 +619,12 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .action-btn:hover:not(:disabled) {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .action-btn:disabled {
-  background: #CCC;
+  background: rgba(255,255,255,0.06);
+  color: #666;
   cursor: not-allowed;
 }
 
@@ -628,15 +633,15 @@ watch(() => props.systemLogs.length, () => {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #FF5722;
+  color: #f97316;
   margin-bottom: 12px;
 }
 
 .spinner-sm {
   width: 14px;
   height: 14px;
-  border: 2px solid #FFCCBC;
-  border-top-color: #FF5722;
+  border: 2px solid rgba(249,115,22,0.2);
+  border-top-color: #f97316;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -645,22 +650,22 @@ watch(() => props.systemLogs.length, () => {
 
 /* System Logs */
 .system-logs {
-  background: #000;
-  color: #DDD;
+  background: #060a10;
+  color: #6ee7b7;
   padding: 16px;
   font-family: 'JetBrains Mono', monospace;
-  border-top: 1px solid #222;
+  border-top: 1px solid rgba(255,255,255,0.06);
   flex-shrink: 0;
 }
 
 .log-header {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   padding-bottom: 8px;
   margin-bottom: 8px;
   font-size: 10px;
-  color: #888;
+  color: #666;
 }
 
 .log-content {
@@ -677,7 +682,7 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .log-content::-webkit-scrollbar-thumb {
-  background: #333;
+  background: rgba(255,255,255,0.1);
   border-radius: 2px;
 }
 
@@ -694,7 +699,7 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .log-msg {
-  color: #CCC;
+  color: #6ee7b7;
   word-break: break-all;
 }
 </style>

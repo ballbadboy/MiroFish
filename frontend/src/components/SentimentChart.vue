@@ -10,7 +10,7 @@
         <svg width="20" height="10" class="legend-line-svg">
           <line
             x1="0" y1="5" x2="20" y2="5"
-            stroke="#000"
+            stroke="#a5b4fc"
             :stroke-width="winnerName && item.name === winnerName ? 2.5 : 1.5"
             :stroke-dasharray="DASH_STYLES[idx % DASH_STYLES.length]"
           />
@@ -106,8 +106,8 @@ function draw() {
     .join('line')
       .attr('x1', 0).attr('x2', iW)
       .attr('y1', d => yScale(d)).attr('y2', d => yScale(d))
-      .attr('stroke', d => d === 0.5 ? '#DDD' : '#F0F0F0')
-      .attr('stroke-width', d => d === 0.5 ? 1 : 1)
+      .attr('stroke', d => d === 0.5 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)')
+      .attr('stroke-width', 1)
 
   // ── X axis ──
   const xTicks = Math.min(maxLen, 8)
@@ -118,10 +118,10 @@ function draw() {
         .ticks(xTicks)
         .tickFormat(d => `R${Math.round(d) + 1}`)
     )
-    .call(ax => ax.select('.domain').attr('stroke', '#EAEAEA'))
-    .call(ax => ax.selectAll('.tick line').attr('stroke', '#EAEAEA'))
+    .call(ax => ax.select('.domain').attr('stroke', 'rgba(255,255,255,0.12)'))
+    .call(ax => ax.selectAll('.tick line').attr('stroke', 'rgba(255,255,255,0.12)'))
     .call(ax => ax.selectAll('.tick text')
-      .attr('fill', '#999')
+      .attr('fill', '#666')
       .attr('font-size', '10')
       .attr('font-family', 'JetBrains Mono, monospace')
     )
@@ -132,7 +132,7 @@ function draw() {
     .call(ax => ax.select('.domain').remove())
     .call(ax => ax.selectAll('.tick line').remove())
     .call(ax => ax.selectAll('.tick text')
-      .attr('fill', '#999')
+      .attr('fill', '#666')
       .attr('font-size', '10')
       .attr('font-family', 'JetBrains Mono, monospace')
     )
@@ -142,10 +142,10 @@ function draw() {
     const dx = xScale(Math.min(props.divergenceRound - 1, maxLen - 1))
     g.append('line')
       .attr('x1', dx).attr('x2', dx).attr('y1', 0).attr('y2', iH)
-      .attr('stroke', '#E74C3C').attr('stroke-width', 1.5).attr('stroke-dasharray', '4 3').attr('opacity', 0.7)
+      .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '4 3').attr('opacity', 0.7)
     g.append('text')
       .attr('x', dx + 4).attr('y', 10)
-      .attr('fill', '#E74C3C').attr('font-size', '9')
+      .attr('fill', '#ef4444').attr('font-size', '9')
       .attr('font-family', 'JetBrains Mono, monospace')
       .text(`÷R${props.divergenceRound}`)
   }
@@ -153,7 +153,7 @@ function draw() {
   // ── Baseline label ──
   g.append('text')
     .attr('x', iW + 4).attr('y', yScale(0.5) + 3)
-    .attr('fill', '#CCC').attr('font-size', '9')
+    .attr('fill', '#555').attr('font-size', '9')
     .attr('font-family', 'JetBrains Mono, monospace')
     .text('50%')
 
@@ -163,17 +163,21 @@ function draw() {
     .y(d  => yScale(Math.max(0, Math.min(1, d ?? 0.5))))
     .curve(curveCatmullRom.alpha(0.5))
 
+  // Line color palette for dark theme
+  const LINE_COLORS = ['#a5b4fc', '#6ee7b7', '#fbbf24', '#f87171', '#c084fc']
+
   allSeries.forEach((s, idx) => {
     const dash    = DASH_STYLES[idx % DASH_STYLES.length]
     const weight  = LINE_WEIGHTS[idx % LINE_WEIGHTS.length]
     const opacity = LINE_OPACITIES[idx % LINE_OPACITIES.length]
     const isWin   = props.winnerName && s.name === props.winnerName
+    const color   = LINE_COLORS[idx % LINE_COLORS.length]
 
     // Draw path (initially solid for animation)
     const path = g.append('path')
       .datum(s.data)
       .attr('fill', 'none')
-      .attr('stroke', '#000')
+      .attr('stroke', color)
       .attr('stroke-width', isWin ? 2.5 : weight)
       .attr('opacity', isWin ? 1 : opacity)
       .attr('d', lineGen)
@@ -198,8 +202,8 @@ function draw() {
         .attr('cx', xScale(s.data.length - 1))
         .attr('cy', yScale(lastVal))
         .attr('r', isWin ? 4.5 : 3)
-        .attr('fill', isWin ? '#000' : '#FFF')
-        .attr('stroke', '#000')
+        .attr('fill', isWin ? color : '#0d1117')
+        .attr('stroke', color)
         .attr('stroke-width', 1.5)
         .attr('opacity', opacity)
     }
@@ -242,12 +246,12 @@ onUnmounted(() => ro?.disconnect())
   gap: 6px;
   font-size: 11px;
   font-family: 'Space Grotesk', system-ui, sans-serif;
-  color: #555;
+  color: #888;
   font-weight: 500;
 }
 
 .legend-item.is-winner {
-  color: #000;
+  color: #f0f0f0;
   font-weight: 700;
 }
 
@@ -260,10 +264,11 @@ onUnmounted(() => ro?.disconnect())
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.06em;
-  background: #000;
-  color: #FFF;
+  background: rgba(99,102,241,0.2);
+  color: #a5b4fc;
+  border: 1px solid rgba(99,102,241,0.4);
   padding: 1px 5px;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .sentiment-svg {
@@ -279,7 +284,7 @@ onUnmounted(() => ro?.disconnect())
   margin-top: 6px;
   font-size: 10px;
   font-family: 'JetBrains Mono', monospace;
-  color: #E74C3C;
+  color: #ef4444;
   letter-spacing: 0.03em;
 }
 
@@ -287,7 +292,8 @@ onUnmounted(() => ro?.disconnect())
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #E74C3C;
+  background: #ef4444;
+  box-shadow: 0 0 4px rgba(239,68,68,0.5);
   flex-shrink: 0;
 }
 </style>

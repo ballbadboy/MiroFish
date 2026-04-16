@@ -18,11 +18,11 @@
 
           <!-- Sections List -->
           <div class="sections-list">
-            <div 
-              v-for="(section, idx) in reportOutline.sections" 
+            <div
+              v-for="(section, idx) in reportOutline.sections"
               :key="idx"
               class="report-section-item"
-              :class="{ 
+              :class="{
                 'is-active': currentSectionIndex === idx + 1,
                 'is-completed': isSectionCompleted(idx + 1),
                 'is-pending': !isSectionCompleted(idx + 1) && currentSectionIndex !== idx + 1
@@ -31,25 +31,25 @@
               <div class="section-header-row" @click="toggleSectionCollapse(idx)" :class="{ 'clickable': isSectionCompleted(idx + 1) }">
                 <span class="section-number">{{ String(idx + 1).padStart(2, '0') }}</span>
                 <h3 class="section-title">{{ section.title }}</h3>
-                <svg 
-                  v-if="isSectionCompleted(idx + 1)" 
-                  class="collapse-icon" 
+                <svg
+                  v-if="isSectionCompleted(idx + 1)"
+                  class="collapse-icon"
                   :class="{ 'is-collapsed': collapsedSections.has(idx) }"
-                  viewBox="0 0 24 24" 
-                  width="20" 
-                  height="20" 
-                  fill="none" 
-                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
                   stroke-width="2"
                 >
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </div>
-              
+
               <div class="section-body" v-show="!collapsedSections.has(idx)">
                 <!-- Completed Content -->
                 <div v-if="generatedSections[idx + 1]" class="generated-content" v-html="renderMarkdown(generatedSections[idx + 1])"></div>
-                
+
                 <!-- Loading State -->
                 <div v-else-if="currentSectionIndex === idx + 1" class="loading-state">
                   <div class="loading-icon">
@@ -90,7 +90,7 @@
           </div>
         </div>
           <div class="action-bar-tabs">
-            <button 
+            <button
               class="tab-pill"
               :class="{ active: activeTab === 'chat' && chatTarget === 'report_agent' }"
               @click="selectReportAgentChat"
@@ -101,7 +101,7 @@
               <span>{{ $t('step5.chatWithReportAgent') }}</span>
             </button>
             <div class="agent-dropdown" v-if="profiles.length > 0">
-              <button 
+              <button
                 class="tab-pill agent-pill"
                 :class="{ active: activeTab === 'chat' && chatTarget === 'agent' }"
                 @click="toggleAgentDropdown"
@@ -117,8 +117,8 @@
               </button>
               <div v-if="showAgentDropdown" class="dropdown-menu">
                 <div class="dropdown-header">{{ $t('step5.selectChatTarget') }}</div>
-                <div 
-                  v-for="(agent, idx) in profiles" 
+                <div
+                  v-for="(agent, idx) in profiles"
                   :key="idx"
                   class="dropdown-item"
                   @click="selectAgent(agent, idx)"
@@ -253,8 +253,8 @@
                 {{ chatTarget === 'report_agent' ? $t('step5.chatEmptyReportAgent') : $t('step5.chatEmptyAgent') }}
               </p>
             </div>
-            <div 
-              v-for="(msg, idx) in chatHistory" 
+            <div
+              v-for="(msg, idx) in chatHistory"
               :key="idx"
               class="chat-message"
               :class="msg.role"
@@ -289,7 +289,7 @@
 
           <!-- Chat Input -->
           <div class="chat-input-area">
-            <textarea 
+            <textarea
               v-model="chatInput"
               class="chat-input"
               :placeholder="$t('step5.chatInputPlaceholder')"
@@ -298,7 +298,7 @@
               rows="1"
               ref="chatInputRef"
             ></textarea>
-            <button 
+            <button
               class="send-btn"
               @click="sendMessage"
               :disabled="!chatInput.trim() || isSending || (!selectedAgent && chatTarget === 'agent')"
@@ -321,14 +321,14 @@
                 <span class="selection-count">{{ $t('step5.selectedCount', { selected: selectedAgents.size, total: profiles.length }) }}</span>
               </div>
               <div class="agents-grid">
-                <label 
-                  v-for="(agent, idx) in profiles" 
+                <label
+                  v-for="(agent, idx) in profiles"
                   :key="idx"
                   class="agent-checkbox"
                   :class="{ checked: selectedAgents.has(idx) }"
                 >
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     :checked="selectedAgents.has(idx)"
                     @change="toggleAgentSelection(idx)"
                   >
@@ -355,7 +355,7 @@
               <div class="section-header">
                 <span class="section-title">{{ $t('step5.surveyQuestions') }}</span>
               </div>
-              <textarea 
+              <textarea
                 v-model="surveyQuestion"
                 class="survey-input"
                 :placeholder="$t('step5.surveyInputPlaceholder')"
@@ -363,7 +363,7 @@
               ></textarea>
             </div>
 
-            <button 
+            <button
               class="survey-submit-btn"
               :disabled="selectedAgents.size === 0 || !surveyQuestion.trim() || isSurveying"
               @click="submitSurvey"
@@ -380,8 +380,8 @@
               <span class="results-count">{{ $t('step5.surveyResultsCount', { count: surveyResults.length }) }}</span>
             </div>
             <div class="results-list">
-              <div 
-                v-for="(result, idx) in surveyResults" 
+              <div
+                v-for="(result, idx) in surveyResults"
                 :key="idx"
                 class="result-card"
               >
@@ -492,7 +492,7 @@ const selectChatTarget = (target) => {
 // 保存当前对话记录到缓存
 const saveChatHistory = () => {
   if (chatHistory.value.length === 0) return
-  
+
   if (chatTarget.value === 'report_agent') {
     chatHistoryCache.value['report_agent'] = [...chatHistory.value]
   } else if (selectedAgentIndex.value !== null) {
@@ -503,13 +503,13 @@ const saveChatHistory = () => {
 const selectReportAgentChat = () => {
   // 保存当前对话记录
   saveChatHistory()
-  
+
   activeTab.value = 'chat'
   chatTarget.value = 'report_agent'
   selectedAgent.value = null
   selectedAgentIndex.value = null
   showAgentDropdown.value = false
-  
+
   // 恢复 Report Agent 的对话记录
   chatHistory.value = chatHistoryCache.value['report_agent'] || []
 }
@@ -532,12 +532,12 @@ const toggleAgentDropdown = () => {
 const selectAgent = (agent, idx) => {
   // 保存当前对话记录
   saveChatHistory()
-  
+
   selectedAgent.value = agent
   selectedAgentIndex.value = idx
   chatTarget.value = 'agent'
   showAgentDropdown.value = false
-  
+
   // 恢复该 Agent 的对话记录
   chatHistory.value = chatHistoryCache.value[`agent_${idx}`] || []
   addLog(t('log.selectChatTarget', { name: agent.username }))
@@ -546,9 +546,9 @@ const selectAgent = (agent, idx) => {
 const formatTime = (timestamp) => {
   if (!timestamp) return ''
   try {
-    return new Date(timestamp).toLocaleTimeString('en-US', { 
-      hour12: false, 
-      hour: '2-digit', 
+    return new Date(timestamp).toLocaleTimeString('en-US', {
+      hour12: false,
+      hour: '2-digit',
       minute: '2-digit'
     })
   } catch {
@@ -564,20 +564,20 @@ const renderMarkdown = (content) => {
 // Chat Methods
 const sendMessage = async () => {
   if (!chatInput.value.trim() || isSending.value) return
-  
+
   const message = chatInput.value.trim()
   chatInput.value = ''
-  
+
   // Add user message
   chatHistory.value.push({
     role: 'user',
     content: message,
     timestamp: new Date().toISOString()
   })
-  
+
   scrollToBottom()
   isSending.value = true
-  
+
   try {
     if (chatTarget.value === 'report_agent') {
       await sendToReportAgent(message)
@@ -601,7 +601,7 @@ const sendMessage = async () => {
 
 const sendToReportAgent = async (message) => {
   addLog(t('log.sendToReportAgent', { message: message.substring(0, 50) }))
-  
+
   // Build chat history for API
   const historyForApi = chatHistory.value
     .filter(msg => msg.role !== 'user' || msg.content !== message)
@@ -610,13 +610,13 @@ const sendToReportAgent = async (message) => {
       role: msg.role,
       content: msg.content
     }))
-  
+
   const res = await chatWithReport({
     simulation_id: props.simulationId,
     message: message,
     chat_history: historyForApi
   })
-  
+
   if (res.success && res.data) {
     chatHistory.value.push({
       role: 'assistant',
@@ -633,9 +633,9 @@ const sendToAgent = async (message) => {
   if (!selectedAgent.value || selectedAgentIndex.value === null) {
     throw new Error(t('step5.selectAgentFirst'))
   }
-  
+
   addLog(t('log.sendToAgent', { name: selectedAgent.value.username, message: message.substring(0, 50) }))
-  
+
   // Build prompt with chat history
   let prompt = message
   if (chatHistory.value.length > 1) {
@@ -646,7 +646,7 @@ const sendToAgent = async (message) => {
       .join('\n')
     prompt = `以下是我们之前的对话：\n${historyContext}\n\n现在我的新问题是：${message}`
   }
-  
+
   const res = await interviewAgents({
     simulation_id: props.simulationId,
     interviews: [{
@@ -654,17 +654,17 @@ const sendToAgent = async (message) => {
       prompt: prompt
     }]
   })
-  
+
   if (res.success && res.data) {
     // 正确的数据路径: res.data.result.results 是一个对象字典
     // 格式: {"twitter_0": {...}, "reddit_0": {...}} 或单平台 {"reddit_0": {...}}
     const resultData = res.data.result || res.data
     const resultsDict = resultData.results || resultData
-    
+
     // 将对象字典转换为数组，优先获取 reddit 平台的回复
     let responseContent = null
     const agentId = selectedAgentIndex.value
-    
+
     if (typeof resultsDict === 'object' && !Array.isArray(resultsDict)) {
       // 优先使用 reddit 平台回复，其次 twitter
       const redditKey = `reddit_${agentId}`
@@ -677,7 +677,7 @@ const sendToAgent = async (message) => {
       // 兼容数组格式
       responseContent = resultsDict[0].response || resultsDict[0].answer
     }
-    
+
     if (responseContent) {
       chatHistory.value.push({
         role: 'assistant',
@@ -724,34 +724,34 @@ const clearAgentSelection = () => {
 
 const submitSurvey = async () => {
   if (selectedAgents.value.size === 0 || !surveyQuestion.value.trim()) return
-  
+
   isSurveying.value = true
   addLog(t('log.sendSurvey', { count: selectedAgents.value.size }))
-  
+
   try {
     const interviews = Array.from(selectedAgents.value).map(idx => ({
       agent_id: idx,
       prompt: surveyQuestion.value.trim()
     }))
-    
+
     const res = await interviewAgents({
       simulation_id: props.simulationId,
       interviews: interviews
     })
-    
+
     if (res.success && res.data) {
       // 正确的数据路径: res.data.result.results 是一个对象字典
       // 格式: {"twitter_0": {...}, "reddit_0": {...}, "twitter_1": {...}, ...}
       const resultData = res.data.result || res.data
       const resultsDict = resultData.results || resultData
-      
+
       // 将对象字典转换为数组格式
       const surveyResultsList = []
-      
+
       for (const interview of interviews) {
         const agentIdx = interview.agent_id
         const agent = profiles.value[agentIdx]
-        
+
         // 优先使用 reddit 平台回复，其次 twitter
         let responseContent = t('step5.noResponse')
 
@@ -769,7 +769,7 @@ const submitSurvey = async () => {
             responseContent = matchedResult.response || matchedResult.answer || t('step5.noResponse')
           }
         }
-        
+
         surveyResultsList.push({
           agent_id: agentIdx,
           agent_name: agent?.username || `Agent ${agentIdx}`,
@@ -778,7 +778,7 @@ const submitSurvey = async () => {
           answer: responseContent
         })
       }
-      
+
       surveyResults.value = surveyResultsList
       addLog(t('log.receivedReplies', { count: surveyResults.value.length }))
     } else {
@@ -794,10 +794,10 @@ const submitSurvey = async () => {
 // Load Report Data
 const loadReportData = async () => {
   if (!props.reportId) return
-  
+
   try {
     addLog(t('log.loadReportData', { id: props.reportId }))
-    
+
     // Get report info
     const reportRes = await getReport(props.reportId)
     if (reportRes.success && reportRes.data) {
@@ -811,22 +811,22 @@ const loadReportData = async () => {
 
 const loadAgentLogs = async () => {
   if (!props.reportId) return
-  
+
   try {
     const res = await getAgentLog(props.reportId, 0)
     if (res.success && res.data) {
       const logs = res.data.logs || []
-      
+
       logs.forEach(log => {
         if (log.action === 'planning_complete' && log.details?.outline) {
           reportOutline.value = log.details.outline
         }
-        
+
         if (log.action === 'section_complete' && log.section_index < 100 && log.details?.content) {
           generatedSections.value[log.section_index] = log.details.content
         }
       })
-      
+
       addLog(t('log.reportDataLoaded'))
     }
   } catch (err) {
@@ -836,7 +836,7 @@ const loadAgentLogs = async () => {
 
 const loadProfiles = async () => {
   if (!props.simulationId) return
-  
+
   try {
     const res = await getSimulationProfilesRealtime(props.simulationId, 'reddit')
     if (res.success && res.data) {
@@ -886,7 +886,7 @@ watch(() => props.simulationId, (newId) => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #F8F9FA;
+  background: #080c12;
   font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
   overflow: hidden;
 }
@@ -907,8 +907,8 @@ watch(() => props.simulationId, (newId) => {
 .left-panel.report-style {
   width: 45%;
   min-width: 450px;
-  background: #FFFFFF;
-  border-right: 1px solid #E5E7EB;
+  background: #0d1117;
+  border-right: 1px solid rgba(255,255,255,0.07);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -924,17 +924,17 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .left-panel::-webkit-scrollbar-thumb {
-  background: transparent;
+  background: rgba(255,255,255,0.12);
   border-radius: 3px;
   transition: background 0.3s ease;
 }
 
 .left-panel:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255,255,255,0.12);
 }
 
 .left-panel::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(255,255,255,0.2);
 }
 
 /* Report Header */
@@ -956,8 +956,8 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .report-tag {
-  background: #000000;
-  color: #FFFFFF;
+  background: #f0f0f0;
+  color: #080c12;
   font-size: 11px;
   font-weight: 700;
   padding: 4px 8px;
@@ -967,7 +967,7 @@ watch(() => props.simulationId, (newId) => {
 
 .report-id {
   font-size: 11px;
-  color: #9CA3AF;
+  color: #a0a0b0;
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -976,7 +976,7 @@ watch(() => props.simulationId, (newId) => {
   font-family: 'Times New Roman', Times, serif;
   font-size: 36px;
   font-weight: 700;
-  color: #111827;
+  color: #f0f0f0;
   line-height: 1.2;
   margin: 0 0 16px 0;
   letter-spacing: -0.02em;
@@ -985,7 +985,7 @@ watch(() => props.simulationId, (newId) => {
 .sub-title {
   font-family: 'Times New Roman', Times, serif;
   font-size: 16px;
-  color: #6B7280;
+  color: #a0a0b0;
   font-style: italic;
   line-height: 1.6;
   margin: 0 0 30px 0;
@@ -994,7 +994,7 @@ watch(() => props.simulationId, (newId) => {
 
 .header-divider {
   height: 1px;
-  background: #E5E7EB;
+  background: rgba(255,255,255,0.07);
   width: 100%;
 }
 
@@ -1026,12 +1026,12 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .section-header-row.clickable:hover {
-  background-color: #F9FAFB;
+  background-color: rgba(255,255,255,0.04);
 }
 
 .collapse-icon {
   margin-left: auto;
-  color: #9CA3AF;
+  color: #a0a0b0;
   transition: transform 0.3s ease;
   flex-shrink: 0;
   align-self: center;
@@ -1044,7 +1044,7 @@ watch(() => props.simulationId, (newId) => {
 .section-number {
   font-family: 'JetBrains Mono', monospace;
   font-size: 16px;
-  color: #E5E7EB;
+  color: rgba(255,255,255,0.07);
   font-weight: 500;
   transition: color 0.3s ease;
 }
@@ -1053,27 +1053,27 @@ watch(() => props.simulationId, (newId) => {
   font-family: 'Times New Roman', Times, serif;
   font-size: 24px;
   font-weight: 600;
-  color: #111827;
+  color: #f0f0f0;
   margin: 0;
   transition: color 0.3s ease;
 }
 
 /* States */
 .report-section-item.is-pending .section-number {
-  color: #E5E7EB;
+  color: rgba(255,255,255,0.07);
 }
 .report-section-item.is-pending .section-title {
-  color: #D1D5DB;
+  color: #666;
 }
 
 .report-section-item.is-active .section-number,
 .report-section-item.is-completed .section-number {
-  color: #9CA3AF;
+  color: #a0a0b0;
 }
 
 .report-section-item.is-active .section-title,
 .report-section-item.is-completed .section-title {
-  color: #111827;
+  color: #f0f0f0;
 }
 
 .section-body {
@@ -1086,7 +1086,7 @@ watch(() => props.simulationId, (newId) => {
   font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.8;
-  color: #374151;
+  color: #a0a0b0;
 }
 
 .generated-content :deep(p) {
@@ -1097,13 +1097,13 @@ watch(() => props.simulationId, (newId) => {
 .generated-content :deep(.md-h3),
 .generated-content :deep(.md-h4) {
   font-family: 'Times New Roman', Times, serif;
-  color: #111827;
+  color: #f0f0f0;
   margin-top: 1.5em;
   margin-bottom: 0.8em;
   font-weight: 700;
 }
 
-.generated-content :deep(.md-h2) { font-size: 20px; border-bottom: 1px solid #F3F4F6; padding-bottom: 8px; }
+.generated-content :deep(.md-h2) { font-size: 20px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 8px; }
 .generated-content :deep(.md-h3) { font-size: 18px; }
 .generated-content :deep(.md-h4) { font-size: 16px; }
 
@@ -1118,28 +1118,28 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .generated-content :deep(.md-quote) {
-  border-left: 3px solid #E5E7EB;
+  border-left: 3px solid rgba(255,255,255,0.12);
   padding-left: 16px;
   margin: 1.5em 0;
-  color: #6B7280;
+  color: #a0a0b0;
   font-style: italic;
   font-family: 'Times New Roman', Times, serif;
 }
 
 .generated-content :deep(.code-block) {
-  background: #F9FAFB;
+  background: rgba(255,255,255,0.03);
   padding: 12px;
   border-radius: 6px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   overflow-x: auto;
   margin: 1em 0;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 .generated-content :deep(strong) {
   font-weight: 600;
-  color: #111827;
+  color: #f0f0f0;
 }
 
 /* Loading State */
@@ -1147,7 +1147,7 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #6B7280;
+  color: #a0a0b0;
   font-size: 14px;
   margin-top: 4px;
 }
@@ -1164,7 +1164,7 @@ watch(() => props.simulationId, (newId) => {
 .loading-text {
   font-family: 'Times New Roman', Times, serif;
   font-size: 15px;
-  color: #4B5563;
+  color: #a0a0b0;
 }
 
 @keyframes spin {
@@ -1187,7 +1187,7 @@ watch(() => props.simulationId, (newId) => {
   justify-content: center;
   gap: 20px;
   padding: 40px;
-  color: #9CA3AF;
+  color: #a0a0b0;
 }
 
 .waiting-animation {
@@ -1200,7 +1200,7 @@ watch(() => props.simulationId, (newId) => {
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 2px solid #E5E7EB;
+  border: 2px solid rgba(255,255,255,0.07);
   border-radius: 50%;
   animation: ripple 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
@@ -1227,7 +1227,7 @@ watch(() => props.simulationId, (newId) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #FFFFFF;
+  background: #0d1117;
   overflow: hidden;
 }
 
@@ -1237,8 +1237,8 @@ watch(() => props.simulationId, (newId) => {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  border-bottom: 1px solid #E5E7EB;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: linear-gradient(180deg, #0d1117 0%, rgba(13,17,23,0.95) 100%);
   gap: 16px;
 }
 
@@ -1250,7 +1250,7 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .action-bar-icon {
-  color: #1F2937;
+  color: #f0f0f0;
   flex-shrink: 0;
 }
 
@@ -1263,13 +1263,13 @@ watch(() => props.simulationId, (newId) => {
 .action-bar-title {
   font-size: 13px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   letter-spacing: -0.01em;
 }
 
 .action-bar-subtitle {
   font-size: 11px;
-  color: #9CA3AF;
+  color: #a0a0b0;
 }
 
 .action-bar-subtitle.mono {
@@ -1291,9 +1291,9 @@ watch(() => props.simulationId, (newId) => {
   padding: 8px 14px;
   font-size: 12px;
   font-weight: 500;
-  color: #6B7280;
-  background: #F3F4F6;
-  border: 1px solid transparent;
+  color: #a0a0b0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1301,14 +1301,15 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .tab-pill:hover {
-  background: #E5E7EB;
-  color: #374151;
+  background: rgba(255,255,255,0.07);
+  color: #f0f0f0;
 }
 
 .tab-pill.active {
-  background: #1F2937;
-  color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.15);
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.3);
 }
 
 .tab-pill svg {
@@ -1323,7 +1324,7 @@ watch(() => props.simulationId, (newId) => {
 .tab-divider {
   width: 1px;
   height: 24px;
-  background: #E5E7EB;
+  background: rgba(255,255,255,0.07);
   margin: 0 6px;
 }
 
@@ -1341,26 +1342,28 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .survey-pill {
-  background: #ECFDF5;
-  color: #047857;
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border-color: rgba(34,197,94,0.2);
 }
 
 .survey-pill:hover {
-  background: #D1FAE5;
-  color: #065F46;
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
 }
 
 .survey-pill.active {
-  background: #047857;
-  color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.2);
+  background: #22c55e;
+  color: #080c12;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(34,197,94,0.3);
 }
 
 /* Interaction Header */
 .interaction-header {
   padding: 16px 24px;
-  border-bottom: 1px solid #E5E7EB;
-  background: #FAFAFA;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
 }
 
 .tab-switcher {
@@ -1375,23 +1378,23 @@ watch(() => props.simulationId, (newId) => {
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 600;
-  color: #6B7280;
+  color: #a0a0b0;
   background: transparent;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tab-btn:hover {
-  background: #F9FAFB;
-  border-color: #D1D5DB;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.12);
 }
 
 .tab-btn.active {
-  background: #1F2937;
-  color: #FFFFFF;
-  border-color: #1F2937;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  border-color: transparent;
 }
 
 .tab-btn svg {
@@ -1408,8 +1411,8 @@ watch(() => props.simulationId, (newId) => {
 
 /* Report Agent Tools Card */
 .report-agent-tools-card {
-  border-bottom: 1px solid #E5E7EB;
-  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
 }
 
 .tools-card-header {
@@ -1424,8 +1427,8 @@ watch(() => props.simulationId, (newId) => {
   height: 44px;
   min-width: 44px;
   min-height: 44px;
-  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1433,7 +1436,7 @@ watch(() => props.simulationId, (newId) => {
   font-size: 18px;
   font-weight: 600;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.2);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.3);
 }
 
 .tools-card-info {
@@ -1444,33 +1447,33 @@ watch(() => props.simulationId, (newId) => {
 .tools-card-name {
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   margin-bottom: 2px;
 }
 
 .tools-card-subtitle {
   font-size: 12px;
-  color: #6B7280;
+  color: #a0a0b0;
 }
 
 .tools-card-toggle {
   width: 28px;
   height: 28px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6B7280;
+  color: #a0a0b0;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .tools-card-toggle:hover {
-  background: #F9FAFB;
-  border-color: #D1D5DB;
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
 }
 
 .tools-card-toggle svg {
@@ -1495,14 +1498,15 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   gap: 10px;
   padding: 12px;
-  background: #FFFFFF;
+  background: rgba(255,255,255,0.04);
   border-radius: 10px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.07);
   transition: all 0.2s ease;
 }
 
 .tool-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255,255,255,0.12);
 }
 
 .tool-icon-wrapper {
@@ -1517,23 +1521,23 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .tool-purple .tool-icon-wrapper {
-  background: rgba(139, 92, 246, 0.1);
-  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a5b4fc;
 }
 
 .tool-blue .tool-icon-wrapper {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3B82F6;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
 }
 
 .tool-orange .tool-icon-wrapper {
-  background: rgba(249, 115, 22, 0.1);
-  color: #F97316;
+  background: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
 }
 
 .tool-green .tool-icon-wrapper {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22C55E;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
 }
 
 .tool-content {
@@ -1544,13 +1548,13 @@ watch(() => props.simulationId, (newId) => {
 .tool-name {
   font-size: 12px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   margin-bottom: 4px;
 }
 
 .tool-desc {
   font-size: 11px;
-  color: #6B7280;
+  color: #a0a0b0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1560,8 +1564,8 @@ watch(() => props.simulationId, (newId) => {
 
 /* Agent Profile Card */
 .agent-profile-card {
-  border-bottom: 1px solid #E5E7EB;
-  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
 }
 
 .profile-card-header {
@@ -1576,8 +1580,8 @@ watch(() => props.simulationId, (newId) => {
   height: 44px;
   min-width: 44px;
   min-height: 44px;
-  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1585,7 +1589,7 @@ watch(() => props.simulationId, (newId) => {
   font-size: 18px;
   font-weight: 600;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.2);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.3);
 }
 
 .profile-card-info {
@@ -1596,7 +1600,7 @@ watch(() => props.simulationId, (newId) => {
 .profile-card-name {
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   margin-bottom: 2px;
 }
 
@@ -1605,39 +1609,40 @@ watch(() => props.simulationId, (newId) => {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #6B7280;
+  color: #a0a0b0;
 }
 
 .profile-card-handle {
-  color: #9CA3AF;
+  color: #a0a0b0;
 }
 
 .profile-card-profession {
   padding: 2px 8px;
-  background: #E5E7EB;
+  background: rgba(255,255,255,0.07);
   border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
+  color: #a0a0b0;
 }
 
 .profile-card-toggle {
   width: 28px;
   height: 28px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6B7280;
+  color: #a0a0b0;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .profile-card-toggle:hover {
-  background: #F9FAFB;
-  border-color: #D1D5DB;
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
 }
 
 .profile-card-toggle svg {
@@ -1658,36 +1663,36 @@ watch(() => props.simulationId, (newId) => {
 .profile-card-label {
   font-size: 11px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 6px;
 }
 
 .profile-card-bio {
-  background: #FFFFFF;
+  background: rgba(255,255,255,0.04);
   padding: 12px 14px;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 .profile-card-bio p {
   margin: 0;
   font-size: 13px;
   line-height: 1.6;
-  color: #4B5563;
+  color: #a0a0b0;
 }
 
 /* Target Selector */
 .target-selector {
   padding: 16px 24px;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .selector-label {
   font-size: 11px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 10px;
@@ -1705,22 +1710,22 @@ watch(() => props.simulationId, (newId) => {
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: #374151;
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
+  color: #a0a0b0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .target-option:hover {
-  border-color: #D1D5DB;
+  border-color: rgba(255,255,255,0.12);
 }
 
 .target-option.active {
-  background: #1F2937;
-  color: #FFFFFF;
-  border-color: #1F2937;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  border-color: transparent;
 }
 
 /* Agent Dropdown */
@@ -1744,10 +1749,10 @@ watch(() => props.simulationId, (newId) => {
   left: 50%;
   transform: translateX(-50%);
   min-width: 240px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
   max-height: 320px;
   overflow-y: auto;
   z-index: 100;
@@ -1757,10 +1762,10 @@ watch(() => props.simulationId, (newId) => {
   padding: 12px 16px 8px;
   font-size: 11px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .dropdown-item {
@@ -1774,8 +1779,8 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .dropdown-item:hover {
-  background: #F9FAFB;
-  border-left-color: #1F2937;
+  background: rgba(255,255,255,0.04);
+  border-left-color: #6366f1;
 }
 
 .dropdown-item:first-of-type {
@@ -1791,8 +1796,8 @@ watch(() => props.simulationId, (newId) => {
   height: 32px;
   min-width: 32px;
   min-height: 32px;
-  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1800,7 +1805,7 @@ watch(() => props.simulationId, (newId) => {
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(31, 41, 55, 0.1);
+  box-shadow: 0 2px 4px rgba(99,102,241,0.2);
 }
 
 .agent-info {
@@ -1814,7 +1819,7 @@ watch(() => props.simulationId, (newId) => {
 .agent-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1822,7 +1827,7 @@ watch(() => props.simulationId, (newId) => {
 
 .agent-role {
   font-size: 11px;
-  color: #9CA3AF;
+  color: #a0a0b0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1838,6 +1843,23 @@ watch(() => props.simulationId, (newId) => {
   gap: 20px;
 }
 
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 .chat-empty {
   flex: 1;
   display: flex;
@@ -1845,7 +1867,7 @@ watch(() => props.simulationId, (newId) => {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 .empty-icon {
@@ -1883,13 +1905,13 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .chat-message.user .message-avatar {
-  background: #1F2937;
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
 }
 
 .chat-message.assistant .message-avatar {
-  background: #F3F4F6;
-  color: #374151;
+  background: rgba(255,255,255,0.07);
+  color: #a0a0b0;
 }
 
 .message-content {
@@ -1916,12 +1938,12 @@ watch(() => props.simulationId, (newId) => {
 .sender-name {
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: #a0a0b0;
 }
 
 .message-time {
   font-size: 11px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 .message-text {
@@ -1932,14 +1954,14 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .chat-message.user .message-text {
-  background: #1F2937;
-  color: #FFFFFF;
+  background: rgba(99,102,241,0.2);
+  color: #a5b4fc;
   border-bottom-right-radius: 4px;
 }
 
 .chat-message.assistant .message-text {
-  background: #F3F4F6;
-  color: #374151;
+  background: rgba(255,255,255,0.04);
+  color: #e0e0e0;
   border-bottom-left-radius: 4px;
 }
 
@@ -1972,7 +1994,7 @@ watch(() => props.simulationId, (newId) => {
 .message-text :deep(.md-oli)::before {
   content: counter(list-counter) ".";
   font-weight: 600;
-  color: #374151;
+  color: #a0a0b0;
   min-width: 20px;
   flex-shrink: 0;
 }
@@ -1992,7 +2014,7 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   gap: 4px;
   padding: 10px 14px;
-  background: #F3F4F6;
+  background: rgba(255,255,255,0.04);
   border-radius: 12px;
   border-bottom-left-radius: 4px;
 }
@@ -2000,7 +2022,7 @@ watch(() => props.simulationId, (newId) => {
 .typing-indicator span {
   width: 8px;
   height: 8px;
-  background: #9CA3AF;
+  background: #a0a0b0;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out;
 }
@@ -2017,17 +2039,20 @@ watch(() => props.simulationId, (newId) => {
 /* Chat Input */
 .chat-input-area {
   padding: 16px 24px;
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid rgba(255,255,255,0.07);
   display: flex;
   gap: 12px;
   align-items: flex-end;
+  background: #0d1117;
 }
 
 .chat-input {
   flex: 1;
   padding: 12px 16px;
   font-size: 14px;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #f0f0f0;
   border-radius: 8px;
   resize: none;
   font-family: inherit;
@@ -2035,37 +2060,42 @@ watch(() => props.simulationId, (newId) => {
   transition: border-color 0.2s ease;
 }
 
+.chat-input::placeholder {
+  color: #666;
+}
+
 .chat-input:focus {
   outline: none;
-  border-color: #1F2937;
+  border-color: rgba(99,102,241,0.5);
 }
 
 .chat-input:disabled {
-  background: #F9FAFB;
+  background: rgba(255,255,255,0.03);
+  color: #666;
   cursor: not-allowed;
 }
 
 .send-btn {
   width: 44px;
   height: 44px;
-  background: #1F2937;
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .send-btn:hover:not(:disabled) {
-  background: #374151;
+  opacity: 0.85;
 }
 
 .send-btn:disabled {
-  background: #E5E7EB;
-  color: #9CA3AF;
+  background: rgba(255,255,255,0.07);
+  color: #666;
   cursor: not-allowed;
 }
 
@@ -2082,7 +2112,7 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   flex-direction: column;
   padding: 24px;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   overflow: hidden;
 }
 
@@ -2112,12 +2142,12 @@ watch(() => props.simulationId, (newId) => {
 .setup-section .section-header .section-title {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: #a0a0b0;
 }
 
 .selection-count {
   font-size: 12px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 /* Agents Grid */
@@ -2131,25 +2161,42 @@ watch(() => props.simulationId, (newId) => {
   align-content: start;
 }
 
+.agents-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agents-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.agents-grid::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+.agents-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 .agent-checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .agent-checkbox:hover {
-  border-color: #D1D5DB;
+  border-color: rgba(255,255,255,0.12);
 }
 
 .agent-checkbox.checked {
-  background: #F0FDF4;
-  border-color: #10B981;
+  background: rgba(34,197,94,0.08);
+  border-color: rgba(34,197,94,0.3);
 }
 
 .agent-checkbox input {
@@ -2161,8 +2208,8 @@ watch(() => props.simulationId, (newId) => {
   height: 28px;
   min-width: 28px;
   min-height: 28px;
-  background: #E5E7EB;
-  color: #374151;
+  background: rgba(255,255,255,0.07);
+  color: #a0a0b0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2173,8 +2220,8 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .agent-checkbox.checked .checkbox-avatar {
-  background: #10B981;
-  color: #FFFFFF;
+  background: #22c55e;
+  color: #080c12;
 }
 
 .checkbox-info {
@@ -2186,7 +2233,7 @@ watch(() => props.simulationId, (newId) => {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2195,7 +2242,7 @@ watch(() => props.simulationId, (newId) => {
 .checkbox-role {
   display: block;
   font-size: 10px;
-  color: #9CA3AF;
+  color: #666;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2204,7 +2251,7 @@ watch(() => props.simulationId, (newId) => {
 .checkbox-indicator {
   width: 20px;
   height: 20px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid rgba(255,255,255,0.12);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -2214,9 +2261,9 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .agent-checkbox.checked .checkbox-indicator {
-  background: #10B981;
-  border-color: #10B981;
-  color: #FFFFFF;
+  background: #22c55e;
+  border-color: #22c55e;
+  color: #080c12;
 }
 
 .checkbox-indicator svg {
@@ -2238,7 +2285,7 @@ watch(() => props.simulationId, (newId) => {
 
 .action-link {
   font-size: 12px;
-  color: #6B7280;
+  color: #a0a0b0;
   background: none;
   border: none;
   cursor: pointer;
@@ -2246,12 +2293,12 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .action-link:hover {
-  color: #1F2937;
+  color: #f0f0f0;
   text-decoration: underline;
 }
 
 .action-divider {
-  color: #E5E7EB;
+  color: rgba(255,255,255,0.12);
 }
 
 /* Survey Input */
@@ -2259,17 +2306,24 @@ watch(() => props.simulationId, (newId) => {
   width: 100%;
   padding: 14px 16px;
   font-size: 14px;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #f0f0f0;
   border-radius: 8px;
   resize: none;
   font-family: inherit;
   line-height: 1.5;
   transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.survey-input::placeholder {
+  color: #666;
 }
 
 .survey-input:focus {
   outline: none;
-  border-color: #1F2937;
+  border-color: rgba(99,102,241,0.5);
 }
 
 .survey-submit-btn {
@@ -2277,12 +2331,12 @@ watch(() => props.simulationId, (newId) => {
   padding: 14px 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #FFFFFF;
-  background: #1F2937;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2291,12 +2345,12 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .survey-submit-btn:hover:not(:disabled) {
-  background: #374151;
+  opacity: 0.85;
 }
 
 .survey-submit-btn:disabled {
-  background: #E5E7EB;
-  color: #9CA3AF;
+  background: rgba(255,255,255,0.07);
+  color: #666;
   cursor: not-allowed;
 }
 
@@ -2304,7 +2358,7 @@ watch(() => props.simulationId, (newId) => {
   width: 18px;
   height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #FFFFFF;
+  border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -2320,6 +2374,23 @@ watch(() => props.simulationId, (newId) => {
   padding: 24px;
 }
 
+.survey-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.survey-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.survey-results::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+.survey-results::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 .results-header {
   display: flex;
   justify-content: space-between;
@@ -2330,12 +2401,12 @@ watch(() => props.simulationId, (newId) => {
 .results-title {
   font-size: 14px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
 }
 
 .results-count {
   font-size: 12px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 .results-list {
@@ -2345,8 +2416,8 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .result-card {
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 12px;
   padding: 20px;
 }
@@ -2363,8 +2434,8 @@ watch(() => props.simulationId, (newId) => {
   height: 36px;
   min-width: 36px;
   min-height: 36px;
-  background: #1F2937;
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2383,12 +2454,12 @@ watch(() => props.simulationId, (newId) => {
 .result-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1F2937;
+  color: #f0f0f0;
 }
 
 .result-role {
   font-size: 12px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 .result-question {
@@ -2396,11 +2467,11 @@ watch(() => props.simulationId, (newId) => {
   align-items: flex-start;
   gap: 8px;
   padding: 12px 14px;
-  background: #FFFFFF;
+  background: rgba(255,255,255,0.04);
   border-radius: 8px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: #6B7280;
+  color: #a0a0b0;
 }
 
 .result-question svg {
@@ -2411,7 +2482,7 @@ watch(() => props.simulationId, (newId) => {
 .result-answer {
   font-size: 14px;
   line-height: 1.7;
-  color: #374151;
+  color: #a0a0b0;
 }
 
 /* Markdown Styles */
@@ -2422,28 +2493,28 @@ watch(() => props.simulationId, (newId) => {
 :deep(.md-h2) {
   font-size: 20px;
   font-weight: 700;
-  color: #1F2937;
+  color: #f0f0f0;
   margin: 24px 0 12px 0;
 }
 
 :deep(.md-h3) {
   font-size: 16px;
   font-weight: 600;
-  color: #374151;
+  color: #f0f0f0;
   margin: 20px 0 10px 0;
 }
 
 :deep(.md-h4) {
   font-size: 14px;
   font-weight: 600;
-  color: #4B5563;
+  color: #a0a0b0;
   margin: 16px 0 8px 0;
 }
 
 :deep(.md-h5) {
   font-size: 13px;
   font-weight: 600;
-  color: #6B7280;
+  color: #a0a0b0;
   margin: 12px 0 6px 0;
 }
 
@@ -2461,37 +2532,38 @@ watch(() => props.simulationId, (newId) => {
 .result-answer :deep(.md-quote) {
   margin: 12px 0;
   padding: 12px 16px;
-  background: #F9FAFB;
-  border-left: 3px solid #1F2937;
-  color: #4B5563;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid #6366f1;
+  color: #a0a0b0;
 }
 
 :deep(.code-block) {
   margin: 12px 0;
   padding: 12px 16px;
-  background: #1F2937;
+  background: rgba(255,255,255,0.03);
   border-radius: 6px;
   overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 :deep(.code-block code) {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  color: #E5E7EB;
+  color: #a5b4fc;
 }
 
 :deep(.inline-code) {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  background: #F3F4F6;
+  background: rgba(255,255,255,0.07);
   padding: 2px 6px;
   border-radius: 4px;
-  color: #1F2937;
+  color: #a5b4fc;
 }
 
 :deep(.md-hr) {
   border: none;
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid rgba(255,255,255,0.07);
   margin: 24px 0;
 }
 </style>

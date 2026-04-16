@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="history-database"
     :class="{ 'no-projects': projects.length === 0 && !loading }"
     ref="historyContainer"
@@ -19,8 +19,8 @@
 
     <!-- 卡片容器（只在有项目时显示） -->
     <div v-if="projects.length > 0" class="cards-container" :class="{ expanded: isExpanded }" :style="containerStyle">
-      <div 
-        v-for="(project, index) in projects" 
+      <div
+        v-for="(project, index) in projects"
         :key="project.simulation_id"
         class="project-card"
         :class="{ expanded: isExpanded, hovering: hoveringCard === index }"
@@ -33,17 +33,17 @@
         <div class="card-header">
           <span class="card-id">{{ formatSimulationId(project.simulation_id) }}</span>
           <div class="card-status-icons">
-            <span 
-              class="status-icon" 
+            <span
+              class="status-icon"
               :class="{ available: project.project_id, unavailable: !project.project_id }"
               :title="$t('history.graphBuild')"
             >◇</span>
-            <span 
-              class="status-icon available" 
+            <span
+              class="status-icon available"
               :title="$t('history.envSetup')"
             >◈</span>
-            <span 
-              class="status-icon" 
+            <span
+              class="status-icon"
               :class="{ available: project.report_id, unavailable: !project.report_id }"
               :title="$t('history.analysisReport')"
             >◆</span>
@@ -54,11 +54,11 @@
         <div class="card-files-wrapper">
           <!-- 角落装饰 - 取景框风格 -->
           <div class="corner-mark top-left-only"></div>
-          
+
           <!-- 文件列表 -->
           <div class="files-list" v-if="project.files && project.files.length > 0">
-            <div 
-              v-for="(file, fileIndex) in project.files.slice(0, 3)" 
+            <div
+              v-for="(file, fileIndex) in project.files.slice(0, 3)"
               :key="fileIndex"
               class="file-item"
             >
@@ -93,7 +93,7 @@
             <span class="status-dot">●</span> {{ formatRounds(project) }}
           </span>
         </div>
-        
+
         <!-- 底部装饰线 (hover时展开) -->
         <div class="card-bottom-line"></div>
       </div>
@@ -152,8 +152,8 @@
 
             <!-- 导航按钮 -->
             <div class="modal-actions">
-              <button 
-                class="modal-btn btn-project" 
+              <button
+                class="modal-btn btn-project"
                 @click="goToProject"
                 :disabled="!selectedProject.project_id"
               >
@@ -161,16 +161,16 @@
                 <span class="btn-icon">◇</span>
                 <span class="btn-text">{{ $t('history.step1Button') }}</span>
               </button>
-              <button 
-                class="modal-btn btn-simulation" 
+              <button
+                class="modal-btn btn-simulation"
                 @click="goToSimulation"
               >
                 <span class="btn-step">Step2</span>
                 <span class="btn-icon">◈</span>
                 <span class="btn-text">{{ $t('history.step2Button') }}</span>
               </button>
-              <button 
-                class="modal-btn btn-report" 
+              <button
+                class="modal-btn btn-report"
                 @click="goToReport"
                 :disabled="!selectedProject.report_id"
               >
@@ -214,8 +214,8 @@ let pendingState = null  // 记录待执行的目标状态
 
 // 卡片布局配置 - 调整为更宽的比例
 const CARDS_PER_ROW = 4
-const CARD_WIDTH = 280  
-const CARD_HEIGHT = 280 
+const CARD_WIDTH = 280
+const CARD_HEIGHT = 280
 const CARD_GAP = 24
 
 // 动态计算容器高度样式
@@ -224,41 +224,41 @@ const containerStyle = computed(() => {
     // 折叠态：固定高度
     return { minHeight: '420px' }
   }
-  
+
   // 展开态：根据卡片数量动态计算高度
   const total = projects.value.length
   if (total === 0) {
     return { minHeight: '280px' }
   }
-  
+
   const rows = Math.ceil(total / CARDS_PER_ROW)
   // 计算实际需要的高度：行数 * 卡片高度 + (行数-1) * 间距 + 少量底部间距
   const expandedHeight = rows * CARD_HEIGHT + (rows - 1) * CARD_GAP + 10
-  
+
   return { minHeight: `${expandedHeight}px` }
 })
 
 // 获取卡片样式
 const getCardStyle = (index) => {
   const total = projects.value.length
-  
+
   if (isExpanded.value) {
     // 展开态：网格布局
     const transition = 'transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease, border-color 0.3s ease'
 
     const col = index % CARDS_PER_ROW
     const row = Math.floor(index / CARDS_PER_ROW)
-    
+
     // 计算当前行的卡片数量，确保每行居中
     const currentRowStart = row * CARDS_PER_ROW
     const currentRowCards = Math.min(CARDS_PER_ROW, total - currentRowStart)
-    
+
     const rowWidth = currentRowCards * CARD_WIDTH + (currentRowCards - 1) * CARD_GAP
-    
+
     const startX = -(rowWidth / 2) + (CARD_WIDTH / 2)
     const colInRow = index % CARDS_PER_ROW
     const x = startX + colInRow * (CARD_WIDTH + CARD_GAP)
-    
+
     // 向下展开，增加与标题的间距
     const y = 20 + row * (CARD_HEIGHT + CARD_GAP)
 
@@ -274,13 +274,13 @@ const getCardStyle = (index) => {
 
     const centerIndex = (total - 1) / 2
     const offset = index - centerIndex
-    
+
     const x = offset * 35
     // 调整起始位置，靠近标题但保持适当间距
     const y = 25 + Math.abs(offset) * 8
     const r = offset * 3
     const s = 0.95 - Math.abs(offset) * 0.05
-    
+
     return {
       transform: `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s})`,
       zIndex: 10 + index,
@@ -294,7 +294,7 @@ const getCardStyle = (index) => {
 const getProgressClass = (simulation) => {
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
-  
+
   if (total === 0 || current === 0) {
     // 未开始
     return 'not-started'
@@ -386,7 +386,7 @@ const getFileTypeLabel = (filename) => {
 const truncateFilename = (filename, maxLength) => {
   if (!filename) return t('history.unknownFile')
   if (filename.length <= maxLength) return filename
-  
+
   const ext = filename.includes('.') ? '.' + filename.split('.').pop() : ''
   const nameWithoutExt = filename.slice(0, filename.length - ext.length)
   const truncatedName = nameWithoutExt.slice(0, maxLength - ext.length - 3) + '...'
@@ -457,50 +457,50 @@ const initObserver = () => {
   if (observer) {
     observer.disconnect()
   }
-  
+
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         const shouldExpand = entry.isIntersecting
-        
+
         // 更新待执行的目标状态（无论是否在动画中都要记录最新的目标状态）
         pendingState = shouldExpand
-        
+
         // 清除之前的防抖定时器（新的滚动意图会覆盖旧的）
         if (expandDebounceTimer) {
           clearTimeout(expandDebounceTimer)
           expandDebounceTimer = null
         }
-        
+
         // 如果正在动画中，只记录状态，等动画结束后处理
         if (isAnimating) return
-        
+
         // 如果目标状态与当前状态相同，不需要处理
         if (shouldExpand === isExpanded.value) {
           pendingState = null
           return
         }
-        
+
         // 使用防抖延迟状态切换，防止快速闪烁
         // 展开时延迟较短(50ms)，收起时延迟较长(200ms)以增加稳定性
         const delay = shouldExpand ? 50 : 200
-        
+
         expandDebounceTimer = setTimeout(() => {
           // 检查是否正在动画
           if (isAnimating) return
-          
+
           // 检查待执行状态是否仍需要执行（可能已被后续滚动覆盖）
           if (pendingState === null || pendingState === isExpanded.value) return
-          
+
           // 设置动画锁
           isAnimating = true
           isExpanded.value = pendingState
           pendingState = null
-          
+
           // 动画完成后解除锁定，并检查是否有待处理的状态变化
           setTimeout(() => {
             isAnimating = false
-            
+
             // 动画结束后，检查是否有新的待执行状态
             if (pendingState !== null && pendingState !== isExpanded.value) {
               // 延迟一小段时间再执行，避免太快切换
@@ -526,7 +526,7 @@ const initObserver = () => {
       rootMargin: '0px 0px -150px 0px'
     }
   )
-  
+
   // 开始观察
   if (historyContainer.value) {
     observer.observe(historyContainer.value)
@@ -544,7 +544,7 @@ onMounted(async () => {
   // 确保 DOM 渲染完成后再加载数据
   await nextTick()
   await loadHistory()
-  
+
   // 等待 DOM 渲染后初始化观察器
   setTimeout(() => {
     initObserver()
@@ -605,9 +605,9 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 50px 50px;
   /* 从左上角开始定位，高度变化时只在底部扩展，不影响已有网格位置 */
   background-position: top left;
@@ -619,9 +619,9 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, transparent 15%, transparent 85%, rgba(255, 255, 255, 0.9) 100%),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, transparent 20%, transparent 80%, rgba(255, 255, 255, 0.8) 100%);
+  background:
+    linear-gradient(to right, rgba(8, 12, 18, 0.9) 0%, transparent 15%, transparent 85%, rgba(8, 12, 18, 0.9) 100%),
+    linear-gradient(to bottom, rgba(8, 12, 18, 0.8) 0%, transparent 20%, transparent 80%, rgba(8, 12, 18, 0.8) 100%);
   pointer-events: none;
 }
 
@@ -641,14 +641,14 @@ onUnmounted(() => {
 .section-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
   max-width: 300px;
 }
 
 .section-title {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #9CA3AF;
+  color: #a0a0b0;
   letter-spacing: 3px;
   text-transform: uppercase;
 }
@@ -668,18 +668,18 @@ onUnmounted(() => {
 .project-card {
   position: absolute;
   width: 280px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 0;
   padding: 14px;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .project-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.12);
   z-index: 1000 !important;
 }
 
@@ -694,13 +694,13 @@ onUnmounted(() => {
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
   font-size: 0.7rem;
 }
 
 .card-id {
-  color: #6B7280;
+  color: #a0a0b0;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
@@ -723,12 +723,12 @@ onUnmounted(() => {
 }
 
 /* 不同功能的颜色 */
-.status-icon:nth-child(1).available { color: #3B82F6; } /* 图谱构建 - 蓝色 */
-.status-icon:nth-child(2).available { color: #F59E0B; } /* 环境搭建 - 橙色 */
-.status-icon:nth-child(3).available { color: #10B981; } /* 分析报告 - 绿色 */
+.status-icon:nth-child(1).available { color: #6366f1; } /* 图谱构建 - 蓝色 */
+.status-icon:nth-child(2).available { color: #f97316; } /* 环境搭建 - 橙色 */
+.status-icon:nth-child(3).available { color: #22c55e; } /* 分析报告 - 绿色 */
 
 .status-icon.unavailable {
-  color: #D1D5DB;
+  color: #666;
   opacity: 0.5;
 }
 
@@ -747,10 +747,10 @@ onUnmounted(() => {
 }
 
 /* 进度状态颜色 */
-.card-progress.completed { color: #10B981; }    /* 已完成 - 绿色 */
-.card-progress.in-progress { color: #F59E0B; }  /* 进行中 - 橙色 */
-.card-progress.not-started { color: #9CA3AF; }  /* 未开始 - 灰色 */
-.card-status.pending { color: #9CA3AF; }
+.card-progress.completed { color: #22c55e; }    /* 已完成 - 绿色 */
+.card-progress.in-progress { color: #f97316; }  /* 进行中 - 橙色 */
+.card-progress.not-started { color: #a0a0b0; }  /* 未开始 - 灰色 */
+.card-status.pending { color: #a0a0b0; }
 
 /* 文件列表区域 */
 .card-files-wrapper {
@@ -760,9 +760,9 @@ onUnmounted(() => {
   max-height: 110px;
   margin-bottom: 12px;
   padding: 8px 10px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
-  border: 1px solid #e8eaed;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
 
@@ -780,8 +780,8 @@ onUnmounted(() => {
   padding: 3px 6px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
-  color: #6B7280;
-  background: rgba(255, 255, 255, 0.5);
+  color: #a0a0b0;
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 3px;
   letter-spacing: 0.3px;
 }
@@ -791,15 +791,15 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 4px 6px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 3px;
   transition: all 0.2s ease;
 }
 
 .file-item:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.07);
   transform: translateX(2px);
-  border-color: #e5e7eb;
+  border-color: rgba(255, 255, 255, 0.07);
 }
 
 /* 简约文件标签样式 */
@@ -820,21 +820,21 @@ onUnmounted(() => {
   min-width: 28px;
 }
 
-/* 低饱和度配色方案 - Morandi色系 */
-.file-tag.pdf { background: #f2e6e6; color: #a65a5a; }
-.file-tag.doc { background: #e6eff5; color: #5a7ea6; }
-.file-tag.xls { background: #e6f2e8; color: #5aa668; }
-.file-tag.ppt { background: #f5efe6; color: #a6815a; }
-.file-tag.txt { background: #f0f0f0; color: #757575; }
-.file-tag.code { background: #eae6f2; color: #815aa6; }
-.file-tag.img { background: #e6f2f2; color: #5aa6a6; }
-.file-tag.zip { background: #f2f0e6; color: #a69b5a; }
-.file-tag.other { background: #f3f4f6; color: #6b7280; }
+/* Dark-adapted Morandi palette */
+.file-tag.pdf { background: rgba(166, 90, 90, 0.2); color: #d4907a; }
+.file-tag.doc { background: rgba(90, 126, 166, 0.2); color: #7aaad4; }
+.file-tag.xls { background: rgba(90, 166, 104, 0.2); color: #7ad490; }
+.file-tag.ppt { background: rgba(166, 129, 90, 0.2); color: #d4b07a; }
+.file-tag.txt { background: rgba(255, 255, 255, 0.06); color: #a0a0b0; }
+.file-tag.code { background: rgba(129, 90, 166, 0.2); color: #b07ad4; }
+.file-tag.img { background: rgba(90, 166, 166, 0.2); color: #7ad4d4; }
+.file-tag.zip { background: rgba(166, 155, 90, 0.2); color: #d4c87a; }
+.file-tag.other { background: rgba(255, 255, 255, 0.05); color: #a0a0b0; }
 
 .file-name {
   font-family: 'Inter', sans-serif;
   font-size: 0.7rem;
-  color: #4b5563;
+  color: #a0a0b0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -848,7 +848,7 @@ onUnmounted(() => {
   justify-content: center;
   gap: 8px;
   height: 48px;
-  color: #9CA3AF;
+  color: #666;
 }
 
 .empty-file-icon {
@@ -864,8 +864,8 @@ onUnmounted(() => {
 
 /* 悬停时文件区域效果 */
 .project-card:hover .card-files-wrapper {
-  border-color: #d1d5db;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* 角落装饰 */
@@ -875,8 +875,8 @@ onUnmounted(() => {
   left: 6px;
   width: 8px;
   height: 8px;
-  border-top: 1.5px solid rgba(0, 0, 0, 0.4);
-  border-left: 1.5px solid rgba(0, 0, 0, 0.4);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-left: 1.5px solid rgba(255, 255, 255, 0.2);
   pointer-events: none;
   z-index: 10;
 }
@@ -886,7 +886,7 @@ onUnmounted(() => {
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #111827;
+  color: #f0f0f0;
   margin: 0 0 6px 0;
   line-height: 1.4;
   white-space: nowrap;
@@ -896,14 +896,14 @@ onUnmounted(() => {
 }
 
 .project-card:hover .card-title {
-  color: #2563EB;
+  color: #a5b4fc;
 }
 
 /* 卡片描述 */
 .card-desc {
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
-  color: #6B7280;
+  color: #a0a0b0;
   margin: 0 0 16px 0;
   line-height: 1.5;
   height: 34px;
@@ -920,10 +920,10 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding-top: 12px;
-  border-top: 1px solid #F3F4F6;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
-  color: #9CA3AF;
+  color: #666;
   font-weight: 500;
 }
 
@@ -949,9 +949,9 @@ onUnmounted(() => {
 }
 
 /* 进度状态颜色 - 底部 */
-.card-footer .card-progress.completed { color: #10B981; }
-.card-footer .card-progress.in-progress { color: #F59E0B; }
-.card-footer .card-progress.not-started { color: #9CA3AF; }
+.card-footer .card-progress.completed { color: #22c55e; }
+.card-footer .card-progress.in-progress { color: #f97316; }
+.card-footer .card-progress.not-started { color: #a0a0b0; }
 
 /* 底部装饰线 */
 .card-bottom-line {
@@ -960,7 +960,7 @@ onUnmounted(() => {
   left: 0;
   height: 2px;
   width: 0;
-  background-color: #000;
+  background-color: #6366f1;
   transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: 20;
 }
@@ -976,7 +976,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 14px;
   padding: 48px;
-  color: #9CA3AF;
+  color: #a0a0b0;
 }
 
 .empty-icon {
@@ -987,8 +987,8 @@ onUnmounted(() => {
 .loading-spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid #E5E7EB;
-  border-top-color: #6B7280;
+  border: 2px solid rgba(255, 255, 255, 0.07);
+  border-top-color: #a0a0b0;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -1020,7 +1020,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1029,14 +1029,14 @@ onUnmounted(() => {
 }
 
 .modal-content {
-  background: #FFFFFF;
+  background: #0d1117;
   width: 560px;
   max-width: 90vw;
   max-height: 85vh;
   overflow-y: auto;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 8px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
 /* 动画过渡 */
@@ -1074,8 +1074,8 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 20px 32px;
-  border-bottom: 1px solid #F3F4F6;
-  background: #FFFFFF;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #0d1117;
 }
 
 .modal-title-section {
@@ -1088,7 +1088,7 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1rem;
   font-weight: 600;
-  color: #111827;
+  color: #f0f0f0;
   letter-spacing: 0.5px;
 }
 
@@ -1101,17 +1101,17 @@ onUnmounted(() => {
   font-weight: 600;
   padding: 4px 8px;
   border-radius: 4px;
-  background: #F9FAFB;
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.modal-progress.completed { color: #10B981; background: rgba(16, 185, 129, 0.1); }
-.modal-progress.in-progress { color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
-.modal-progress.not-started { color: #9CA3AF; background: #F3F4F6; }
+.modal-progress.completed { color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+.modal-progress.in-progress { color: #f97316; background: rgba(249, 115, 22, 0.1); }
+.modal-progress.not-started { color: #a0a0b0; background: rgba(255, 255, 255, 0.04); }
 
 .modal-create-time {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: #9CA3AF;
+  color: #666;
   letter-spacing: 0.3px;
 }
 
@@ -1121,7 +1121,7 @@ onUnmounted(() => {
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: #9CA3AF;
+  color: #666;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1131,8 +1131,8 @@ onUnmounted(() => {
 }
 
 .modal-close:hover {
-  background: #F3F4F6;
-  color: #111827;
+  background: rgba(255, 255, 255, 0.07);
+  color: #f0f0f0;
 }
 
 /* 弹窗内容 */
@@ -1151,7 +1151,7 @@ onUnmounted(() => {
 .modal-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: #6B7280;
+  color: #a0a0b0;
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 10px;
@@ -1160,11 +1160,11 @@ onUnmounted(() => {
 
 .modal-requirement {
   font-size: 0.95rem;
-  color: #374151;
+  color: #f0f0f0;
   line-height: 1.6;
   padding: 16px;
-  background: #F9FAFB;
-  border: 1px solid #F3F4F6;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 8px;
 }
 
@@ -1183,17 +1183,17 @@ onUnmounted(() => {
 }
 
 .modal-files::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: transparent;
   border-radius: 2px;
 }
 
 .modal-files::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 2px;
 }
 
 .modal-files::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .modal-file-item {
@@ -1201,20 +1201,20 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
 
 .modal-file-item:hover {
-  border-color: #D1D5DB;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 .modal-file-name {
   font-size: 0.85rem;
-  color: #4B5563;
+  color: #a0a0b0;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1223,10 +1223,10 @@ onUnmounted(() => {
 
 .modal-empty {
   font-size: 0.85rem;
-  color: #9CA3AF;
+  color: #666;
   padding: 16px;
-  background: #F9FAFB;
-  border: 1px dashed #E5E7EB;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.07);
   border-radius: 6px;
   text-align: center;
 }
@@ -1237,19 +1237,19 @@ onUnmounted(() => {
   align-items: center;
   gap: 16px;
   padding: 10px 32px 0;
-  background: #FFFFFF;
+  background: #0d1117;
 }
 
 .divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
 }
 
 .divider-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: #9CA3AF;
+  color: #666;
   letter-spacing: 2px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1260,7 +1260,7 @@ onUnmounted(() => {
   display: flex;
   gap: 16px;
   padding: 20px 32px;
-  background: #FFFFFF;
+  background: #0d1117;
 }
 
 .modal-btn {
@@ -1270,9 +1270,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 8px;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -1280,22 +1280,22 @@ onUnmounted(() => {
 }
 
 .modal-btn:hover:not(:disabled) {
-  border-color: #000000;
+  border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
 .modal-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: #F9FAFB;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .btn-step {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
   font-weight: 500;
-  color: #9CA3AF;
+  color: #666;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -1311,15 +1311,15 @@ onUnmounted(() => {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: #4B5563;
+  color: #a0a0b0;
 }
 
-.modal-btn.btn-project .btn-icon { color: #3B82F6; }
-.modal-btn.btn-simulation .btn-icon { color: #F59E0B; }
-.modal-btn.btn-report .btn-icon { color: #10B981; }
+.modal-btn.btn-project .btn-icon { color: #6366f1; }
+.modal-btn.btn-simulation .btn-icon { color: #f97316; }
+.modal-btn.btn-report .btn-icon { color: #22c55e; }
 
 .modal-btn:hover:not(:disabled) .btn-text {
-  color: #111827;
+  color: #f0f0f0;
 }
 
 /* 不可回放提示 */
@@ -1328,13 +1328,13 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0 32px 20px;
-  background: #FFFFFF;
+  background: #0d1117;
 }
 
 .hint-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: #9CA3AF;
+  color: #666;
   letter-spacing: 0.3px;
   text-align: center;
   line-height: 1.5;

@@ -1,8 +1,10 @@
 <template>
   <div class="home-container">
-    <!-- 顶部导航栏 -->
+    <!-- Navbar -->
     <nav class="navbar">
-      <div class="nav-brand">MIROFISH</div>
+      <div class="nav-brand">
+        <span class="brand-miro">MIRO</span><span class="brand-fish">FISH</span>
+      </div>
       <div class="nav-links">
         <LanguageSwitcher />
         <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
@@ -12,19 +14,21 @@
     </nav>
 
     <div class="main-content">
-      <!-- 上半部分：Hero 区域 -->
+      <!-- Hero Section -->
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">{{ $t('home.tagline') }}</span>
-            <span class="version-text">{{ $t('home.version') }}</span>
+            <span class="version-badge">
+              <span class="badge-dot"></span>
+              {{ $t('home.tagline') }} / {{ $t('home.version') }}
+            </span>
           </div>
-          
+
           <h1 class="main-title">
             {{ $t('home.heroTitle1') }}<br>
             <span class="gradient-text">{{ $t('home.heroTitle2') }}</span>
           </h1>
-          
+
           <div class="hero-desc">
             <p>
               <i18n-t keypath="home.heroDesc" tag="span">
@@ -37,36 +41,35 @@
               {{ $t('home.slogan') }}<span class="blinking-cursor">_</span>
             </p>
           </div>
-           
+
           <div class="decoration-square"></div>
         </div>
-        
+
         <div class="hero-right">
-          <!-- Logo 区域 -->
           <div class="logo-container">
+            <div class="logo-glow"></div>
             <img src="../assets/logo/MiroFish_logo_left.jpeg" alt="MiroFish Logo" class="hero-logo" />
           </div>
-          
-          <button class="scroll-down-btn" @click="scrollToBottom">
-            ↓
-          </button>
+
+          <button class="scroll-down-btn" @click="scrollToBottom">↓</button>
         </div>
       </section>
 
-      <!-- 下半部分：双栏布局 -->
+      <!-- Dashboard Section -->
       <section class="dashboard-section">
-        <!-- 左栏：状态与步骤 -->
+        <!-- Left Panel -->
         <div class="left-panel">
           <div class="panel-header">
-            <span class="status-dot">■</span> {{ $t('home.systemStatus') }}
+            <span class="online-dot"></span>
+            <span class="online-label">ONLINE</span>
+            <span class="status-sep">&nbsp;/&nbsp;</span>
+            {{ $t('home.systemStatus') }}
           </div>
-          
+
           <h2 class="section-title">{{ $t('home.systemReady') }}</h2>
-          <p class="section-desc">
-            {{ $t('home.systemReadyDesc') }}
-          </p>
-          
-          <!-- 数据指标卡片 -->
+          <p class="section-desc">{{ $t('home.systemReadyDesc') }}</p>
+
+          <!-- Metric cards -->
           <div class="metrics-row">
             <div class="metric-card">
               <div class="metric-value">{{ $t('home.metricLowCost') }}</div>
@@ -78,42 +81,57 @@
             </div>
           </div>
 
-          <!-- 项目模拟步骤介绍 (新增区域) -->
+          <!-- Workflow steps -->
           <div class="steps-container">
             <div class="steps-header">
-               <span class="diamond-icon">◇</span> {{ $t('home.workflowSequence') }}
+              <span class="diamond-icon">◇</span> {{ $t('home.workflowSequence') }}
             </div>
             <div class="workflow-list">
               <div class="workflow-item">
-                <span class="step-num">01</span>
+                <div class="step-indicator">
+                  <div class="step-circle active">01</div>
+                  <div class="step-line"></div>
+                </div>
                 <div class="step-info">
                   <div class="step-title">{{ $t('home.step01Title') }}</div>
                   <div class="step-desc">{{ $t('home.step01Desc') }}</div>
                 </div>
               </div>
               <div class="workflow-item">
-                <span class="step-num">02</span>
+                <div class="step-indicator">
+                  <div class="step-circle">02</div>
+                  <div class="step-line"></div>
+                </div>
                 <div class="step-info">
                   <div class="step-title">{{ $t('home.step02Title') }}</div>
                   <div class="step-desc">{{ $t('home.step02Desc') }}</div>
                 </div>
               </div>
               <div class="workflow-item">
-                <span class="step-num">03</span>
+                <div class="step-indicator">
+                  <div class="step-circle">03</div>
+                  <div class="step-line"></div>
+                </div>
                 <div class="step-info">
                   <div class="step-title">{{ $t('home.step03Title') }}</div>
                   <div class="step-desc">{{ $t('home.step03Desc') }}</div>
                 </div>
               </div>
               <div class="workflow-item">
-                <span class="step-num">04</span>
+                <div class="step-indicator">
+                  <div class="step-circle">04</div>
+                  <div class="step-line"></div>
+                </div>
                 <div class="step-info">
                   <div class="step-title">{{ $t('home.step04Title') }}</div>
                   <div class="step-desc">{{ $t('home.step04Desc') }}</div>
                 </div>
               </div>
               <div class="workflow-item">
-                <span class="step-num">05</span>
+                <div class="step-indicator">
+                  <div class="step-circle">05</div>
+                  <div class="step-line last"></div>
+                </div>
                 <div class="step-info">
                   <div class="step-title">{{ $t('home.step05Title') }}</div>
                   <div class="step-desc">{{ $t('home.step05Desc') }}</div>
@@ -123,17 +141,27 @@
           </div>
         </div>
 
-        <!-- 右栏：交互控制台 -->
+        <!-- Right Panel: Console -->
         <div class="right-panel">
           <div class="console-box">
-            <!-- 上传区域 -->
+            <!-- Console title bar -->
+            <div class="console-titlebar">
+              <div class="titlebar-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <span class="titlebar-label">reality-seed.sh</span>
+            </div>
+
+            <!-- Upload section -->
             <div class="console-section">
               <div class="console-header">
                 <span class="console-label">{{ $t('home.realitySeed') }}</span>
                 <span class="console-meta">{{ $t('home.supportedFormats') }}</span>
               </div>
-              
-              <div 
+
+              <div
                 class="upload-zone"
                 :class="{ 'drag-over': isDragOver, 'has-files': files.length > 0 }"
                 @dragover.prevent="handleDragOver"
@@ -150,13 +178,19 @@
                   style="display: none"
                   :disabled="loading"
                 />
-                
+
                 <div v-if="files.length === 0" class="upload-placeholder">
-                  <div class="upload-icon">↑</div>
+                  <div class="upload-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
                   <div class="upload-title">{{ $t('home.dragToUpload') }}</div>
                   <div class="upload-hint">{{ $t('home.orBrowse') }}</div>
                 </div>
-                
+
                 <div v-else class="file-list">
                   <div v-for="(file, index) in files" :key="index" class="file-item">
                     <span class="file-icon">📄</span>
@@ -167,12 +201,12 @@
               </div>
             </div>
 
-            <!-- 分割线 -->
+            <!-- Divider -->
             <div class="console-divider">
               <span>{{ $t('home.inputParams') }}</span>
             </div>
 
-            <!-- 输入区域 -->
+            <!-- Textarea section -->
             <div class="console-section">
               <div class="console-header">
                 <span class="console-label">{{ $t('home.simulationPrompt') }}</span>
@@ -189,12 +223,13 @@
               </div>
             </div>
 
-            <!-- 启动按钮 -->
+            <!-- Start button -->
             <div class="console-section btn-section">
-              <button 
+              <button
                 class="start-engine-btn"
                 @click="startSimulation"
                 :disabled="!canSubmit || loading"
+                :class="{ 'is-active': canSubmit && !loading, 'is-loading': loading }"
               >
                 <span v-if="!loading">{{ $t('home.startEngine') }}</span>
                 <span v-else>{{ $t('home.initializing') }}</span>
@@ -205,7 +240,7 @@
         </div>
       </section>
 
-      <!-- 历史项目数据库 -->
+      <!-- History -->
       <HistoryDatabase />
     </div>
   </div>
@@ -312,181 +347,202 @@ const startSimulation = () => {
 </script>
 
 <style scoped>
-/* 全局变量与重置 */
+/* ── Design tokens ─────────────────────────────────── */
 :root {
-  --black: #000000;
-  --white: #FFFFFF;
-  --orange: #FF4500;
-  --gray-light: #F5F5F5;
-  --gray-text: #666666;
-  --border: #E5E5E5;
-  /* 
-    使用 Space Grotesk 作为主要标题字体，JetBrains Mono 作为代码/标签字体
-    确保已在 index.html 引入这些 Google Fonts 
-  */
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
-  --font-cn: 'Noto Sans SC', system-ui, sans-serif;
+  --bg:             #080c12;
+  --bg-card:        rgba(255,255,255,0.04);
+  --bg-card-hover:  rgba(255,255,255,0.07);
+  --border:         rgba(255,255,255,0.08);
+  --border-strong:  rgba(255,255,255,0.15);
+  --text:           #f0f0f0;
+  --text-2:         #a1a1aa;
+  --text-3:         #52525b;
+  --accent:         #6366f1;
+  --accent-glow:    rgba(99,102,241,0.3);
+  --cta:            #f97316;
+  --cta-glow:       rgba(249,115,22,0.25);
+  --success:        #22c55e;
+  --mono:           'JetBrains Mono', monospace;
+  --sans:           'Inter', 'Space Grotesk', system-ui, sans-serif;
 }
 
+/* ── Base ──────────────────────────────────────────── */
 .home-container {
   min-height: 100vh;
-  background: var(--white);
-  font-family: var(--font-sans);
-  color: var(--black);
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--text);
 }
 
-/* 顶部导航 */
+/* ── Navbar ────────────────────────────────────────── */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
   height: 60px;
-  background: var(--black);
-  color: var(--white);
+  background: rgba(8,12,18,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 48px;
 }
 
 .nav-brand {
-  font-family: var(--font-mono);
+  font-family: var(--mono);
   font-weight: 800;
-  letter-spacing: 1px;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}
+
+.brand-miro {
+  color: #fff;
+}
+
+.brand-fish {
+  color: var(--accent);
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .github-link {
-  color: var(--white);
+  color: var(--text-2);
   text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: opacity 0.2s;
+  gap: 6px;
+  transition: color 0.2s;
 }
 
 .github-link:hover {
-  opacity: 0.8;
+  color: var(--text);
 }
 
 .arrow {
-  font-family: sans-serif;
+  font-size: 0.9rem;
 }
 
-/* 主要内容区 */
+/* ── Main content ──────────────────────────────────── */
 .main-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 60px 40px;
+  padding: 72px 48px 80px;
 }
 
-/* Hero 区域 */
+/* ── Hero ──────────────────────────────────────────── */
 .hero-section {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 80px;
-  position: relative;
+  align-items: center;
+  margin-bottom: 96px;
+  gap: 48px;
 }
 
 .hero-left {
   flex: 1;
-  padding-right: 60px;
+  min-width: 0;
 }
 
+/* Badge */
 .tag-row {
-  display: flex;
+  margin-bottom: 28px;
+}
+
+.version-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 25px;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-}
-
-.orange-tag {
-  background: var(--orange);
-  color: var(--white);
-  padding: 4px 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  gap: 8px;
+  padding: 5px 14px;
+  border: 1px solid rgba(99,102,241,0.4);
+  border-radius: 999px;
+  font-family: var(--mono);
   font-size: 0.75rem;
-}
-
-.version-text {
-  color: #999;
-  font-weight: 500;
+  color: var(--accent);
   letter-spacing: 0.5px;
 }
 
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Title */
 .main-title {
-  font-size: 4.5rem;
-  line-height: 1.2;
-  font-weight: 500;
-  margin: 0 0 40px 0;
-  letter-spacing: -2px;
-  color: var(--black);
+  font-size: 5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin: 0 0 36px 0;
+  letter-spacing: -0.04em;
+  color: var(--text);
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #000000 0%, #444444 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: inline-block;
 }
 
+/* Description */
 .hero-desc {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--gray-text);
-  max-width: 640px;
-  margin-bottom: 50px;
-  font-weight: 400;
-  text-align: justify;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-2);
+  max-width: 600px;
+  margin-bottom: 40px;
 }
 
 .hero-desc p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .highlight-bold {
-  color: var(--black);
+  color: var(--text);
   font-weight: 700;
 }
 
 .highlight-orange {
-  color: var(--orange);
+  color: var(--cta);
   font-weight: 700;
-  font-family: var(--font-mono);
+  font-family: var(--mono);
 }
 
 .highlight-code {
-  background: rgba(0, 0, 0, 0.05);
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  color: var(--black);
+  background: rgba(99,102,241,0.12);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.88em;
+  color: #a5b4fc;
   font-weight: 600;
 }
 
 .slogan-text {
-  font-size: 1.2rem;
-  font-weight: 520;
-  color: var(--black);
-  letter-spacing: 1px;
-  border-left: 3px solid var(--orange);
-  padding-left: 15px;
-  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+  margin-top: 16px;
 }
 
 .blinking-cursor {
-  color: var(--orange);
+  color: var(--accent);
   animation: blink 1s step-end infinite;
   font-weight: 700;
 }
@@ -497,188 +553,308 @@ const startSimulation = () => {
 }
 
 .decoration-square {
-  width: 16px;
-  height: 16px;
-  background: var(--orange);
+  width: 14px;
+  height: 14px;
+  background: var(--cta);
+  margin-top: 28px;
 }
 
+/* Hero right */
 .hero-right {
-  flex: 0.8;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .logo-container {
-  width: 100%;
+  position: relative;
   display: flex;
   justify-content: flex-end;
-  padding-right: 40px;
+}
+
+.logo-glow {
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(24px);
 }
 
 .hero-logo {
-  max-width: 500px; /* 调整logo大小 */
+  max-width: 460px;
   width: 100%;
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #f8f8f8;
+  padding: 6px;
+  box-shadow:
+    0 0 0 1px rgba(99,102,241,0.15),
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 80px rgba(99,102,241,0.1);
 }
 
 .scroll-down-btn {
   width: 40px;
   height: 40px;
-  border: 1px solid var(--border);
-  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--orange);
-  font-size: 1.2rem;
+  color: var(--accent);
+  font-size: 1.1rem;
   transition: all 0.2s;
 }
 
 .scroll-down-btn:hover {
-  border-color: var(--orange);
+  border-color: var(--accent);
+  background: rgba(99,102,241,0.1);
 }
 
-/* Dashboard 双栏布局 */
+/* ── Dashboard two-column ──────────────────────────── */
 .dashboard-section {
   display: flex;
-  gap: 60px;
+  gap: 48px;
   border-top: 1px solid var(--border);
-  padding-top: 60px;
+  padding-top: 64px;
   align-items: flex-start;
 }
 
-.dashboard-section .left-panel,
-.dashboard-section .right-panel {
+/* ── Left panel ────────────────────────────────────── */
+.left-panel {
+  flex: 0.85;
   display: flex;
   flex-direction: column;
 }
 
-/* 左侧面板 */
-.left-panel {
-  flex: 0.8;
-}
-
 .panel-header {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: #999;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-3);
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 22px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.status-dot {
-  color: var(--orange);
-  font-size: 0.8rem;
+.online-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success);
+  flex-shrink: 0;
+}
+
+.online-label {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.status-sep {
+  color: var(--text-3);
 }
 
 .section-title {
   font-size: 2rem;
-  font-weight: 520;
-  margin: 0 0 15px 0;
+  font-weight: 400;
+  margin: 0 0 12px 0;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
 .section-desc {
-  color: var(--gray-text);
-  margin-bottom: 25px;
+  color: var(--text-2);
+  margin-bottom: 28px;
   line-height: 1.6;
+  font-size: 0.95rem;
 }
 
+/* Metric cards */
 .metrics-row {
   display: flex;
-  gap: 20px;
-  margin-bottom: 15px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .metric-card {
+  flex: 1;
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 20px 30px;
-  min-width: 150px;
+  border-radius: 12px;
+  padding: 18px 22px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.metric-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
 }
 
 .metric-value {
-  font-family: var(--font-mono);
-  font-size: 1.8rem;
-  font-weight: 520;
-  margin-bottom: 5px;
+  font-family: var(--mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--accent);
 }
 
 .metric-label {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  line-height: 1.4;
 }
 
-/* 项目模拟步骤介绍 */
+/* Steps */
 .steps-container {
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 30px;
-  position: relative;
+  border-radius: 14px;
+  padding: 28px 24px;
 }
 
 .steps-header {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: #999;
-  margin-bottom: 25px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .diamond-icon {
-  font-size: 1.2rem;
-  line-height: 1;
+  color: var(--accent);
 }
 
 .workflow-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .workflow-item {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 16px;
 }
 
-.step-num {
-  font-family: var(--font-mono);
+.step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--black);
-  opacity: 0.3;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.step-circle.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(99,102,241,0.12);
+  box-shadow: 0 0 10px rgba(99,102,241,0.2);
+}
+
+.step-line {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.step-line.last {
+  display: none;
 }
 
 .step-info {
   flex: 1;
+  padding-bottom: 12px;
 }
 
 .step-title {
-  font-weight: 520;
-  font-size: 1rem;
-  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+  color: var(--text);
 }
 
 .step-desc {
-  font-size: 0.85rem;
-  color: var(--gray-text);
+  font-size: 0.8rem;
+  color: var(--text-2);
+  line-height: 1.5;
 }
 
-/* 右侧交互控制台 */
+/* ── Right panel: Console ──────────────────────────── */
 .right-panel {
-  flex: 1.2;
+  flex: 1.15;
 }
 
 .console-box {
-  border: 1px solid #CCC; /* 外部实线 */
-  padding: 8px; /* 内边距形成双重边框感 */
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+}
+
+/* Title bar */
+.console-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+
+.titlebar-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.dot-red    { background: #ff5f57; }
+.dot-yellow { background: #febc2e; }
+.dot-green  { background: #28c840; }
+
+.titlebar-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-left: 4px;
 }
 
 .console-section {
-  padding: 20px;
+  padding: 20px 24px;
 }
 
 .console-section.btn-section {
@@ -688,95 +864,125 @@ const startSimulation = () => {
 .console-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: #666;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
 }
 
+.console-label {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.console-meta {
+  color: var(--text-3);
+}
+
+/* Upload zone */
 .upload-zone {
-  border: 1px dashed #CCC;
-  height: 200px;
-  overflow-y: auto;
+  background: rgba(0,0,0,0.3);
+  border: 1.5px dashed var(--border-strong);
+  border-radius: 10px;
+  min-height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s;
-  background: #FAFAFA;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  overflow-y: auto;
 }
 
 .upload-zone.has-files {
   align-items: flex-start;
 }
 
-.upload-zone:hover {
-  background: #F0F0F0;
-  border-color: #999;
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(99,102,241,0.06);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .upload-placeholder {
   text-align: center;
+  padding: 20px;
 }
 
 .upload-icon {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #DDD;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(99,102,241,0.3);
+  background: rgba(99,102,241,0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 15px;
-  color: #999;
+  margin: 0 auto 14px;
+  color: var(--accent);
 }
 
 .upload-title {
   font-weight: 500;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+  color: var(--text-2);
 }
 
 .upload-hint {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: #999;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
 }
 
 .file-list {
   width: 100%;
-  padding: 15px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .file-item {
   display: flex;
   align-items: center;
-  background: var(--white);
-  padding: 8px 12px;
-  border: 1px solid #EEE;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-2);
 }
 
 .file-name {
   flex: 1;
   margin: 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .remove-btn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2rem;
-  color: #999;
+  font-size: 1.1rem;
+  color: var(--text-3);
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
 }
 
+.remove-btn:hover {
+  color: var(--text);
+}
+
+/* Divider */
 .console-divider {
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 4px 0;
+  padding: 0 24px;
 }
 
 .console-divider::before,
@@ -784,114 +990,146 @@ const startSimulation = () => {
   content: '';
   flex: 1;
   height: 1px;
-  background: #EEE;
+  background: var(--border);
 }
 
 .console-divider span {
-  padding: 0 15px;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: #BBB;
-  letter-spacing: 1px;
+  padding: 0 14px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
+/* Textarea */
 .input-wrapper {
   position: relative;
-  border: 1px solid #DDD;
-  background: #FAFAFA;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
 }
 
 .code-input {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 20px;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
+  padding: 16px 18px 36px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
   line-height: 1.6;
   resize: vertical;
   outline: none;
-  min-height: 150px;
+  min-height: 130px;
+  color: var(--text);
+  caret-color: var(--accent);
+}
+
+.code-input::placeholder {
+  color: var(--text-3);
 }
 
 .model-badge {
   position: absolute;
   bottom: 10px;
-  right: 15px;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: #AAA;
+  right: 14px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-3);
+  pointer-events: none;
 }
 
+/* Start engine button */
 .start-engine-btn {
   width: 100%;
-  background: var(--black);
-  color: var(--white);
-  border: none;
-  padding: 20px;
-  font-family: var(--font-mono);
+  height: 60px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 24px;
+  font-family: var(--mono);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
+  cursor: not-allowed;
   transition: all 0.3s ease;
-  letter-spacing: 1px;
+  letter-spacing: 0.06em;
   position: relative;
   overflow: hidden;
 }
 
-/* 可点击状态（非禁用） */
-.start-engine-btn:not(:disabled) {
-  background: var(--black);
-  border: 1px solid var(--black);
-  animation: pulse-border 2s infinite;
+.start-engine-btn.is-active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-color: transparent;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(99,102,241,0);
+  animation: pulse-glow 2.4s ease-in-out infinite;
 }
 
-.start-engine-btn:hover:not(:disabled) {
-  background: var(--orange);
-  border-color: var(--orange);
+.start-engine-btn.is-active:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.45);
 }
 
-.start-engine-btn:active:not(:disabled) {
+.start-engine-btn.is-active:active {
   transform: translateY(0);
 }
 
-.start-engine-btn:disabled {
-  background: #E5E5E5;
-  color: #999;
-  cursor: not-allowed;
-  transform: none;
-  border: 1px solid #E5E5E5;
+.start-engine-btn.is-loading {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-color: transparent;
+  cursor: wait;
+  opacity: 0.75;
 }
 
-/* 引导动画：微妙的边框脉冲 */
-@keyframes pulse-border {
-  0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-  70% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+.btn-arrow {
+  font-size: 1.1rem;
 }
 
-/* 响应式适配 */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
+}
+
+/* ── Responsive ────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .dashboard-section {
-    flex-direction: column;
+  .navbar {
+    padding: 0 24px;
   }
-  
+
+  .main-content {
+    padding: 48px 24px 60px;
+  }
+
   .hero-section {
     flex-direction: column;
+    margin-bottom: 64px;
   }
-  
-  .hero-left {
-    padding-right: 0;
-    margin-bottom: 40px;
+
+  .main-title {
+    font-size: 3.2rem;
   }
-  
+
+  .hero-right {
+    align-items: flex-start;
+  }
+
   .hero-logo {
-    max-width: 200px;
-    margin-bottom: 20px;
+    max-width: 280px;
+  }
+
+  .dashboard-section {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .metrics-row {
+    flex-direction: column;
   }
 }
 </style>
@@ -899,55 +1137,16 @@ const startSimulation = () => {
 <style>
 /* English locale adjustments (unscoped to target html[lang]) */
 html[lang="en"] .main-title {
-  font-size: 3.5rem;
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  letter-spacing: -1px;
+  font-size: 3.8rem;
+  letter-spacing: -0.03em;
 }
 
 html[lang="en"] .hero-desc {
   text-align: left;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0;
 }
 
 html[lang="en"] .slogan-text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0;
-}
-
-html[lang="en"] .tag-row {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-html[lang="en"] .navbar .nav-links {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Left pane: system status + workflow */
-html[lang="en"] .status-section {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-html[lang="en"] .status-section .status-ready {
-  font-size: 1.6rem;
-}
-
-html[lang="en"] .status-section .metric-value {
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 1.4rem;
-}
-
-html[lang="en"] .workflow-list .step-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-html[lang="en"] .workflow-list .step-desc {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 0.72rem !important;
-  line-height: 1.4 !important;
-}
-
-html[lang="en"] .workflow-list {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 </style>

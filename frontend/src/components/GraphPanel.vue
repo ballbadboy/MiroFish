@@ -13,12 +13,12 @@
         </button>
       </div>
     </div>
-    
+
     <div class="graph-container" ref="graphContainer">
       <!-- 图谱可视化 -->
       <div v-if="graphData" class="graph-view">
         <svg ref="graphSvg" class="graph-svg"></svg>
-        
+
         <!-- 构建中/模拟中提示 -->
         <div v-if="currentPhase === 1 || isSimulating" class="graph-building-hint">
           <div class="memory-icon-wrapper">
@@ -29,7 +29,7 @@
           </div>
           {{ isSimulating ? $t('graph.graphMemoryRealtime') : $t('graph.realtimeUpdating') }}
         </div>
-        
+
         <!-- 模拟结束后的提示 -->
         <div v-if="showSimulationFinishedHint" class="graph-building-hint finished-hint">
           <div class="hint-icon-wrapper">
@@ -47,7 +47,7 @@
             </svg>
           </button>
         </div>
-        
+
         <!-- 节点/边详情面板 -->
         <div v-if="selectedItem" class="detail-panel">
           <div class="detail-panel-header">
@@ -57,7 +57,7 @@
             </span>
             <button class="detail-close" @click="closeDetailPanel">×</button>
           </div>
-          
+
           <!-- 节点详情 -->
           <div v-if="selectedItem.type === 'node'" class="detail-content">
             <div class="detail-row">
@@ -72,7 +72,7 @@
               <span class="detail-label">Created:</span>
               <span class="detail-value">{{ formatDateTime(selectedItem.data.created_at) }}</span>
             </div>
-            
+
             <!-- Properties -->
             <div class="detail-section" v-if="selectedItem.data.attributes && Object.keys(selectedItem.data.attributes).length > 0">
               <div class="section-title">Properties:</div>
@@ -83,13 +83,13 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Summary -->
             <div class="detail-section" v-if="selectedItem.data.summary">
               <div class="section-title">Summary:</div>
               <div class="summary-text">{{ selectedItem.data.summary }}</div>
             </div>
-            
+
             <!-- Labels -->
             <div class="detail-section" v-if="selectedItem.data.labels && selectedItem.data.labels.length > 0">
               <div class="section-title">Labels:</div>
@@ -100,7 +100,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 边详情 -->
           <div v-else class="detail-content">
             <!-- 自环组详情 -->
@@ -109,15 +109,15 @@
                 {{ selectedItem.data.source_name }} - Self Relations
                 <span class="self-loop-count">{{ selectedItem.data.selfLoopCount }} items</span>
               </div>
-              
+
               <div class="self-loop-list">
-                <div 
-                  v-for="(loop, idx) in selectedItem.data.selfLoopEdges" 
-                  :key="loop.uuid || idx" 
+                <div
+                  v-for="(loop, idx) in selectedItem.data.selfLoopEdges"
+                  :key="loop.uuid || idx"
                   class="self-loop-item"
                   :class="{ expanded: expandedSelfLoops.has(loop.uuid || idx) }"
                 >
-                  <div 
+                  <div
                     class="self-loop-item-header"
                     @click="toggleSelfLoop(loop.uuid || idx)"
                   >
@@ -125,7 +125,7 @@
                     <span class="self-loop-name">{{ loop.name || loop.fact_type || 'RELATED' }}</span>
                     <span class="self-loop-toggle">{{ expandedSelfLoops.has(loop.uuid || idx) ? '−' : '+' }}</span>
                   </div>
-                  
+
                   <div class="self-loop-item-content" v-show="expandedSelfLoops.has(loop.uuid || idx)">
                     <div class="detail-row" v-if="loop.uuid">
                       <span class="detail-label">UUID:</span>
@@ -153,13 +153,13 @@
                 </div>
               </div>
             </template>
-            
+
             <!-- 普通边详情 -->
             <template v-else>
               <div class="edge-relation-header">
                 {{ selectedItem.data.source_name }} → {{ selectedItem.data.name || 'RELATED_TO' }} → {{ selectedItem.data.target_name }}
               </div>
-              
+
               <div class="detail-row">
                 <span class="detail-label">UUID:</span>
                 <span class="detail-value uuid-text">{{ selectedItem.data.uuid }}</span>
@@ -176,7 +176,7 @@
                 <span class="detail-label">Fact:</span>
                 <span class="detail-value fact-text">{{ selectedItem.data.fact }}</span>
               </div>
-              
+
               <!-- Episodes -->
               <div class="detail-section" v-if="selectedItem.data.episodes && selectedItem.data.episodes.length > 0">
                 <div class="section-title">Episodes:</div>
@@ -186,7 +186,7 @@
                   </span>
                 </div>
               </div>
-              
+
               <div class="detail-row" v-if="selectedItem.data.created_at">
                 <span class="detail-label">Created:</span>
                 <span class="detail-value">{{ formatDateTime(selectedItem.data.created_at) }}</span>
@@ -199,13 +199,13 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 加载状态 -->
       <div v-else-if="loading" class="graph-state">
         <div class="loading-spinner"></div>
         <p>{{ $t('graph.graphDataLoading') }}</p>
       </div>
-      
+
       <!-- 等待/空状态 -->
       <div v-else class="graph-state">
         <div class="empty-icon">❖</div>
@@ -223,7 +223,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 显示边标签开关 -->
     <div v-if="graphData" class="edge-labels-toggle">
       <label class="toggle-switch">
@@ -287,7 +287,7 @@ const entityTypes = computed(() => {
   const typeMap = {}
   // 美观的颜色调色板
   const colors = ['#FF6B35', '#004E89', '#7B2D8E', '#1A936F', '#C5283D', '#E9724C', '#3498db', '#9b59b6', '#27ae60', '#f39c12']
-  
+
   props.graphData.nodes.forEach(node => {
     const type = node.labels?.find(l => l !== 'Entity') || 'Entity'
     if (!typeMap[type]) {
@@ -303,13 +303,13 @@ const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
   try {
     const date = new Date(dateStr)
-    return date.toLocaleString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     })
   } catch {
     return dateStr
@@ -327,47 +327,47 @@ let linkLabelBgRef = null
 
 const renderGraph = () => {
   if (!graphSvg.value || !props.graphData) return
-  
+
   // 停止之前的仿真
   if (currentSimulation) {
     currentSimulation.stop()
   }
-  
+
   const container = graphContainer.value
   const width = container.clientWidth
   const height = container.clientHeight
-  
+
   const svg = d3.select(graphSvg.value)
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', `0 0 ${width} ${height}`)
-    
+
   svg.selectAll('*').remove()
-  
+
   const nodesData = props.graphData.nodes || []
   const edgesData = props.graphData.edges || []
-  
+
   if (nodesData.length === 0) return
 
   // Prep data
   const nodeMap = {}
   nodesData.forEach(n => nodeMap[n.uuid] = n)
-  
+
   const nodes = nodesData.map(n => ({
     id: n.uuid,
     name: n.name || 'Unnamed',
     type: n.labels?.find(l => l !== 'Entity') || 'Entity',
     rawData: n
   }))
-  
+
   const nodeIds = new Set(nodes.map(n => n.id))
-  
+
   // 处理边数据，计算同一对节点间的边数量和索引
   const edgePairCount = {}
   const selfLoopEdges = {} // 按节点分组的自环边
   const tempEdges = edgesData
     .filter(e => nodeIds.has(e.source_node_uuid) && nodeIds.has(e.target_node_uuid))
-  
+
   // 统计每对节点之间的边数量，收集自环边
   tempEdges.forEach(e => {
     if (e.source_node_uuid === e.target_node_uuid) {
@@ -385,26 +385,26 @@ const renderGraph = () => {
       edgePairCount[pairKey] = (edgePairCount[pairKey] || 0) + 1
     }
   })
-  
+
   // 记录当前处理到每对节点的第几条边
   const edgePairIndex = {}
   const processedSelfLoopNodes = new Set() // 已处理的自环节点
-  
+
   const edges = []
-  
+
   tempEdges.forEach(e => {
     const isSelfLoop = e.source_node_uuid === e.target_node_uuid
-    
+
     if (isSelfLoop) {
       // 自环边 - 每个节点只添加一条合并的自环
       if (processedSelfLoopNodes.has(e.source_node_uuid)) {
         return // 已处理过，跳过
       }
       processedSelfLoopNodes.add(e.source_node_uuid)
-      
+
       const allSelfLoops = selfLoopEdges[e.source_node_uuid]
       const nodeName = nodeMap[e.source_node_uuid]?.name || 'Unknown'
-      
+
       edges.push({
         source: e.source_node_uuid,
         target: e.target_node_uuid,
@@ -422,15 +422,15 @@ const renderGraph = () => {
       })
       return
     }
-    
+
     const pairKey = [e.source_node_uuid, e.target_node_uuid].sort().join('_')
     const totalCount = edgePairCount[pairKey]
     const currentIndex = edgePairIndex[pairKey] || 0
     edgePairIndex[pairKey] = currentIndex + 1
-    
+
     // 判断边的方向是否与标准化方向一致（源UUID < 目标UUID）
     const isReversed = e.source_node_uuid > e.target_node_uuid
-    
+
     // 计算曲率：多条边时分散开，单条边为直线
     let curvature = 0
     if (totalCount > 1) {
@@ -438,14 +438,14 @@ const renderGraph = () => {
       // 曲率范围根据边数量增加，边越多曲率范围越大
       const curvatureRange = Math.min(1.2, 0.6 + totalCount * 0.15)
       curvature = ((currentIndex / (totalCount - 1)) - 0.5) * curvatureRange * 2
-      
+
       // 如果边的方向与标准化方向相反，翻转曲率
       // 这样确保所有边在同一参考系下分布，不会因方向不同而重叠
       if (isReversed) {
         curvature = -curvature
       }
     }
-    
+
     edges.push({
       source: e.source_node_uuid,
       target: e.target_node_uuid,
@@ -462,7 +462,7 @@ const renderGraph = () => {
       }
     })
   })
-    
+
   // Color scale
   const colorMap = {}
   entityTypes.value.forEach(t => colorMap[t.name] = t.color)
@@ -483,11 +483,11 @@ const renderGraph = () => {
     // 添加向中心的引力，让独立的节点群聚集到中心区域
     .force('x', d3.forceX(width / 2).strength(0.04))
     .force('y', d3.forceY(height / 2).strength(0.04))
-  
+
   currentSimulation = simulation
 
   const g = svg.append('g')
-  
+
   // Zoom
   svg.call(d3.zoom().extent([[0, 0], [width, height]]).scaleExtent([0.1, 4]).on('zoom', (event) => {
     g.attr('transform', event.transform)
@@ -495,12 +495,12 @@ const renderGraph = () => {
 
   // Links - 使用 path 支持曲线
   const linkGroup = g.append('g').attr('class', 'links')
-  
+
   // 计算曲线路径
   const getLinkPath = (d) => {
     const sx = d.source.x, sy = d.source.y
     const tx = d.target.x, ty = d.target.y
-    
+
     // 检测自环
     if (d.isSelfLoop) {
       // 自环：绘制一个圆弧从节点出发再返回
@@ -513,12 +513,12 @@ const renderGraph = () => {
       // 使用圆弧绘制自环（sweep-flag=1 顺时针）
       return `M${x1},${y1} A${loopRadius},${loopRadius} 0 1,1 ${x2},${y2}`
     }
-    
+
     if (d.curvature === 0) {
       // 直线
       return `M${sx},${sy} L${tx},${ty}`
     }
-    
+
     // 计算曲线控制点 - 根据边数量和距离动态调整
     const dx = tx - sx, dy = ty - sy
     const dist = Math.sqrt(dx * dx + dy * dy)
@@ -531,25 +531,25 @@ const renderGraph = () => {
     const offsetY = dx / dist * d.curvature * baseOffset
     const cx = (sx + tx) / 2 + offsetX
     const cy = (sy + ty) / 2 + offsetY
-    
+
     return `M${sx},${sy} Q${cx},${cy} ${tx},${ty}`
   }
-  
+
   // 计算曲线中点（用于标签定位）
   const getLinkMidpoint = (d) => {
     const sx = d.source.x, sy = d.source.y
     const tx = d.target.x, ty = d.target.y
-    
+
     // 检测自环
     if (d.isSelfLoop) {
       // 自环标签位置：节点右侧
       return { x: sx + 70, y: sy }
     }
-    
+
     if (d.curvature === 0) {
       return { x: (sx + tx) / 2, y: (sy + ty) / 2 }
     }
-    
+
     // 二次贝塞尔曲线的中点 t=0.5
     const dx = tx - sx, dy = ty - sy
     const dist = Math.sqrt(dx * dx + dy * dy)
@@ -560,14 +560,14 @@ const renderGraph = () => {
     const offsetY = dx / dist * d.curvature * baseOffset
     const cx = (sx + tx) / 2 + offsetX
     const cy = (sy + ty) / 2 + offsetY
-    
+
     // 二次贝塞尔曲线公式 B(t) = (1-t)²P0 + 2(1-t)tP1 + t²P2, t=0.5
     const midX = 0.25 * sx + 0.5 * cx + 0.25 * tx
     const midY = 0.25 * sy + 0.5 * cy + 0.25 * ty
-    
+
     return { x: midX, y: midY }
   }
-  
+
   const link = linkGroup.selectAll('path')
     .data(edges)
     .enter().append('path')
@@ -583,7 +583,7 @@ const renderGraph = () => {
       linkLabels.attr('fill', '#666')
       // 高亮当前选中的边
       d3.select(event.target).attr('stroke', '#3498db').attr('stroke-width', 3)
-      
+
       selectedItem.value = {
         type: 'edge',
         data: d.rawData
@@ -608,7 +608,7 @@ const renderGraph = () => {
       // 高亮对应的边
       link.filter(l => l === d).attr('stroke', '#3498db').attr('stroke-width', 3)
       d3.select(event.target).attr('fill', 'rgba(52, 152, 219, 0.1)')
-      
+
       selectedItem.value = {
         type: 'edge',
         data: d.rawData
@@ -636,20 +636,20 @@ const renderGraph = () => {
       // 高亮对应的边
       link.filter(l => l === d).attr('stroke', '#3498db').attr('stroke-width', 3)
       d3.select(event.target).attr('fill', '#3498db')
-      
+
       selectedItem.value = {
         type: 'edge',
         data: d.rawData
       }
     })
-  
+
   // 保存引用供外部控制显隐
   linkLabelsRef = linkLabels
   linkLabelBgRef = linkLabelBg
 
   // Nodes group
   const nodeGroup = g.append('g').attr('class', 'nodes')
-  
+
   // Node circles
   const node = nodeGroup.selectAll('circle')
     .data(nodes)
@@ -673,13 +673,13 @@ const renderGraph = () => {
         const dx = event.x - d._dragStartX
         const dy = event.y - d._dragStartY
         const distance = Math.sqrt(dx * dx + dy * dy)
-        
+
         if (!d._isDragging && distance > 3) {
           // 首次检测到真正拖拽，才重启仿真
           d._isDragging = true
           simulation.alphaTarget(0.3).restart()
         }
-        
+
         if (d._isDragging) {
           d.fx = event.x
           d.fy = event.y
@@ -706,7 +706,7 @@ const renderGraph = () => {
       link.filter(l => l.source.id === d.id || l.target.id === d.id)
         .attr('stroke', '#E91E63')
         .attr('stroke-width', 2.5)
-      
+
       selectedItem.value = {
         type: 'node',
         data: d.rawData,
@@ -741,7 +741,7 @@ const renderGraph = () => {
   simulation.on('tick', () => {
     // 更新曲线路径
     link.attr('d', d => getLinkPath(d))
-    
+
     // 更新边标签位置（无旋转，水平显示更清晰）
     linkLabels.each(function(d) {
       const mid = getLinkMidpoint(d)
@@ -750,7 +750,7 @@ const renderGraph = () => {
         .attr('y', mid.y)
         .attr('transform', '') // 移除旋转，保持水平
     })
-    
+
     // 更新边标签背景
     linkLabelBg.each(function(d, i) {
       const mid = getLinkMidpoint(d)
@@ -772,7 +772,7 @@ const renderGraph = () => {
       .attr('x', d => d.x)
       .attr('y', d => d.y)
   })
-  
+
   // 点击空白处关闭详情面板
   svg.on('click', () => {
     selectedItem.value = null
@@ -818,8 +818,8 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #FAFAFA;
-  background-image: radial-gradient(#D0D0D0 1.5px, transparent 1.5px);
+  background-color: #080c12;
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
   overflow: hidden;
 }
@@ -834,14 +834,14 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  background: linear-gradient(to bottom, rgba(8,12,18,0.95), rgba(8,12,18,0));
   pointer-events: none;
 }
 
 .panel-title {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #f0f0f0;
   pointer-events: auto;
 }
 
@@ -855,24 +855,24 @@ onUnmounted(() => {
 .tool-btn {
   height: 32px;
   padding: 0 12px;
-  border: 1px solid #E0E0E0;
-  background: #FFF;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   cursor: pointer;
-  color: #666;
+  color: #a0a0b0;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   font-size: 13px;
 }
 
 .tool-btn:hover {
-  background: #F5F5F5;
-  color: #000;
-  border-color: #CCC;
+  background: rgba(255,255,255,0.08);
+  color: #f0f0f0;
+  border-color: rgba(255,255,255,0.18);
 }
 
 .tool-btn .btn-text {
@@ -902,7 +902,7 @@ onUnmounted(() => {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #999;
+  color: #555;
 }
 
 .empty-icon {
@@ -916,11 +916,12 @@ onUnmounted(() => {
   position: absolute;
   bottom: 24px;
   left: 24px;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
   padding: 12px 16px;
   border-radius: 8px;
-  border: 1px solid #EAEAEA;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   z-index: 10;
 }
 
@@ -946,7 +947,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #555;
+  color: #a0a0b0;
 }
 
 .legend-dot {
@@ -968,11 +969,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #FFF;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
   padding: 8px 14px;
   border-radius: 20px;
-  border: 1px solid #E0E0E0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   z-index: 10;
 }
 
@@ -996,7 +998,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #E0E0E0;
+  background-color: rgba(255,255,255,0.07);
   border-radius: 22px;
   transition: 0.3s;
 }
@@ -1008,22 +1010,23 @@ onUnmounted(() => {
   width: 16px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: #a0a0b0;
   border-radius: 50%;
   transition: 0.3s;
 }
 
 input:checked + .slider {
-  background-color: #7B2D8E;
+  background-color: #6366f1;
 }
 
 input:checked + .slider:before {
   transform: translateX(18px);
+  background-color: #f0f0f0;
 }
 
 .toggle-label {
   font-size: 12px;
-  color: #666;
+  color: #888;
 }
 
 /* Detail Panel - Right Side */
@@ -1033,10 +1036,11 @@ input:checked + .slider:before {
   right: 20px;
   width: 320px;
   max-height: calc(100% - 100px);
-  background: #FFF;
-  border: 1px solid #EAEAEA;
+  background: rgba(13,17,23,0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   overflow: hidden;
   font-family: 'Noto Sans SC', system-ui, sans-serif;
   font-size: 13px;
@@ -1050,14 +1054,14 @@ input:checked + .slider:before {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: #FAFAFA;
-  border-bottom: 1px solid #EEE;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   flex-shrink: 0;
 }
 
 .detail-title {
   font-weight: 600;
-  color: #333;
+  color: #f0f0f0;
   font-size: 14px;
 }
 
@@ -1075,14 +1079,14 @@ input:checked + .slider:before {
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #999;
+  color: #555;
   line-height: 1;
   padding: 0;
   transition: color 0.2s;
 }
 
 .detail-close:hover {
-  color: #333;
+  color: #f0f0f0;
 }
 
 .detail-content {
@@ -1106,7 +1110,7 @@ input:checked + .slider:before {
 }
 
 .detail-value {
-  color: #333;
+  color: #f0f0f0;
   flex: 1;
   word-break: break-word;
 }
@@ -1119,19 +1123,19 @@ input:checked + .slider:before {
 
 .detail-value.fact-text {
   line-height: 1.5;
-  color: #444;
+  color: #a0a0b0;
 }
 
 .detail-section {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid #F0F0F0;
+  border-top: 1px solid rgba(255,255,255,0.07);
 }
 
 .section-title {
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: #888;
   margin-bottom: 10px;
 }
 
@@ -1153,13 +1157,13 @@ input:checked + .slider:before {
 }
 
 .property-value {
-  color: #333;
+  color: #f0f0f0;
   flex: 1;
 }
 
 .summary-text {
   line-height: 1.6;
-  color: #444;
+  color: #a0a0b0;
   font-size: 12px;
 }
 
@@ -1172,11 +1176,11 @@ input:checked + .slider:before {
 .label-tag {
   display: inline-block;
   padding: 4px 12px;
-  background: #F5F5F5;
-  border: 1px solid #E0E0E0;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 16px;
   font-size: 11px;
-  color: #555;
+  color: #a0a0b0;
 }
 
 .episodes-list {
@@ -1188,24 +1192,24 @@ input:checked + .slider:before {
 .episode-tag {
   display: inline-block;
   padding: 6px 10px;
-  background: #F8F8F8;
-  border: 1px solid #E8E8E8;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 6px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: #666;
+  color: #888;
   word-break: break-all;
 }
 
 /* Edge relation header */
 .edge-relation-header {
-  background: #F8F8F8;
+  background: rgba(255,255,255,0.03);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
   font-size: 13px;
   font-weight: 500;
-  color: #333;
+  color: #f0f0f0;
   line-height: 1.5;
   word-break: break-word;
 }
@@ -1218,14 +1222,14 @@ input:checked + .slider:before {
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px);
-  color: #fff;
+  color: #f0f0f0;
   padding: 10px 20px;
   border-radius: 30px;
   font-size: 13px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -1242,12 +1246,12 @@ input:checked + .slider:before {
 .memory-icon {
   width: 18px;
   height: 18px;
-  color: #4CAF50;
+  color: #22c55e;
 }
 
 @keyframes breathe {
-  0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 2px rgba(76, 175, 80, 0.3)); }
-  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.6)); }
+  0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 2px rgba(34, 197, 94, 0.3)); }
+  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6)); }
 }
 
 /* 模拟结束后的提示样式 */
@@ -1265,7 +1269,7 @@ input:checked + .slider:before {
 .finished-hint .hint-icon {
   width: 18px;
   height: 18px;
-  color: #FFF;
+  color: #f0f0f0;
 }
 
 .finished-hint .hint-text {
@@ -1279,18 +1283,18 @@ input:checked + .slider:before {
   justify-content: center;
   width: 22px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  color: #FFF;
+  color: #f0f0f0;
   transition: all 0.2s;
   margin-left: 8px;
   flex-shrink: 0;
 }
 
 .hint-close-btn:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.2);
   transform: scale(1.1);
 }
 
@@ -1298,8 +1302,8 @@ input:checked + .slider:before {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid #E0E0E0;
-  border-top-color: #7B2D8E;
+  border: 3px solid rgba(255,255,255,0.07);
+  border-top-color: #6366f1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -1310,15 +1314,15 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
-  border: 1px solid #C8E6C9;
+  background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(99,102,241,0.1) 100%);
+  border: 1px solid rgba(34,197,94,0.2);
 }
 
 .self-loop-count {
   margin-left: auto;
   font-size: 11px;
-  color: #666;
-  background: rgba(255,255,255,0.8);
+  color: #888;
+  background: rgba(255,255,255,0.06);
   padding: 2px 8px;
   border-radius: 10px;
 }
@@ -1330,8 +1334,8 @@ input:checked + .slider:before {
 }
 
 .self-loop-item {
-  background: #FAFAFA;
-  border: 1px solid #EAEAEA;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 8px;
 }
 
@@ -1340,24 +1344,24 @@ input:checked + .slider:before {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: #F5F5F5;
+  background: rgba(255,255,255,0.03);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .self-loop-item-header:hover {
-  background: #EEEEEE;
+  background: rgba(255,255,255,0.06);
 }
 
 .self-loop-item.expanded .self-loop-item-header {
-  background: #E8E8E8;
+  background: rgba(255,255,255,0.07);
 }
 
 .self-loop-index {
   font-size: 10px;
   font-weight: 600;
   color: #888;
-  background: #E0E0E0;
+  background: rgba(255,255,255,0.07);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -1365,7 +1369,7 @@ input:checked + .slider:before {
 .self-loop-name {
   font-size: 12px;
   font-weight: 500;
-  color: #333;
+  color: #f0f0f0;
   flex: 1;
 }
 
@@ -1378,19 +1382,19 @@ input:checked + .slider:before {
   font-size: 14px;
   font-weight: 600;
   color: #888;
-  background: #E0E0E0;
+  background: rgba(255,255,255,0.07);
   border-radius: 4px;
   transition: all 0.2s;
 }
 
 .self-loop-item.expanded .self-loop-toggle {
-  background: #D0D0D0;
-  color: #666;
+  background: rgba(99,102,241,0.2);
+  color: #a5b4fc;
 }
 
 .self-loop-item-content {
   padding: 12px;
-  border-top: 1px solid #EAEAEA;
+  border-top: 1px solid rgba(255,255,255,0.07);
 }
 
 .self-loop-item-content .detail-row {

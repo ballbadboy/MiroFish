@@ -66,59 +66,65 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Light theme (default - for white header backgrounds) */
 .switcher-trigger {
   background: transparent;
-  color: #333;
-  border: 1px solid #CCC;
-  padding: 4px 12px;
+  color: #a0a0b0;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 4px 10px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: border-color 0.2s, opacity 0.2s;
+  border-radius: 4px;
+  transition: border-color 0.2s, color 0.2s;
+  letter-spacing: 0.5px;
 }
 
 .switcher-trigger:hover {
-  border-color: #999;
+  border-color: rgba(255,255,255,0.25);
+  color: #f0f0f0;
 }
 
 .caret {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
+  opacity: 0.6;
 }
 
 .switcher-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 4px;
-  background: #FFFFFF;
-  border: 1px solid #DDD;
+  margin-top: 6px;
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.1);
   list-style: none;
   padding: 4px 0;
   min-width: 100%;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
 }
 
 .switcher-option {
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  color: #333;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  color: #a0a0b0;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.5px;
 }
 
 .switcher-option:hover {
-  background: #F0F0F0;
+  background: rgba(255,255,255,0.06);
+  color: #f0f0f0;
 }
 
 .switcher-option.active {
-  color: var(--orange, #FF4500);
+  color: #a5b4fc;
+  background: rgba(99,102,241,0.1);
 }
-
-
 </style>

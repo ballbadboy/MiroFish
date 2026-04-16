@@ -228,9 +228,9 @@ onMounted(fetchComparison)
 <style scoped>
 .scenario-panel {
   font-family: 'Space Grotesk', system-ui, sans-serif;
-  color: #0D0D0D;
-  background: #FFF;
-  border: 1px solid #EAEAEA;
+  color: #f0f0f0;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -245,15 +245,15 @@ onMounted(fetchComparison)
   gap: 10px;
   padding: 48px 24px;
   font-size: 13px;
-  color: #999;
+  color: #a0a0b0;
 }
 
-.panel-error { color: #E74C3C; }
+.panel-error { color: #ef4444; }
 
 .spinner {
   width: 18px; height: 18px;
-  border: 2px solid #EAEAEA;
-  border-top-color: #000;
+  border: 2px solid rgba(255, 255, 255, 0.07);
+  border-top-color: #f0f0f0;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -263,7 +263,7 @@ onMounted(fetchComparison)
 /* ── Header ── */
 .panel-header {
   padding: 16px 20px 12px;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -283,8 +283,10 @@ onMounted(fetchComparison)
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-family: 'JetBrains Mono', monospace;
-  color: #999;
-  background: #F5F5F5;
+  color: #a0a0b0;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
   padding: 3px 7px;
   border-radius: 2px;
 }
@@ -292,7 +294,7 @@ onMounted(fetchComparison)
 .exp-id {
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
-  color: #666;
+  color: #a0a0b0;
 }
 
 .panel-meta {
@@ -304,13 +306,13 @@ onMounted(fetchComparison)
 .meta-item {
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
-  color: #999;
+  color: #a0a0b0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.meta-item strong { color: #333; }
-.meta-item strong.red { color: #E74C3C; }
+.meta-item strong { color: #f0f0f0; }
+.meta-item strong.red { color: #ef4444; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* ── Winner Banner ── */
@@ -319,8 +321,8 @@ onMounted(fetchComparison)
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #0D0D0D;
-  color: #FFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   font-size: 12px;
   font-weight: 500;
 }
@@ -330,7 +332,7 @@ onMounted(fetchComparison)
 /* ── Chart Section ── */
 .chart-section {
   padding: 16px 20px 12px;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .section-label {
@@ -339,7 +341,7 @@ onMounted(fetchComparison)
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-family: 'JetBrains Mono', monospace;
-  color: #BBB;
+  color: #666;
   margin-bottom: 10px;
 }
 
@@ -348,19 +350,19 @@ onMounted(fetchComparison)
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .branch-card {
   padding: 16px 20px;
-  border-right: 1px solid #EAEAEA;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
   transition: background 0.2s;
 }
 
 .branch-card:last-child { border-right: none; }
 
 .branch-card.is-winner {
-  background: #FAFAFA;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .branch-card.is-failed {
@@ -381,17 +383,17 @@ onMounted(fetchComparison)
   gap: 8px;
   font-size: 13px;
   font-weight: 700;
-  color: #000;
+  color: #f0f0f0;
 }
 
 .branch-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
-  background: #DDD;
+  background: rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
 }
 
-.branch-dot.dot-winner { background: #000; }
+.branch-dot.dot-winner { background: #6366f1; }
 
 .card-badges {
   display: flex;
@@ -405,8 +407,8 @@ onMounted(fetchComparison)
   font-weight: 700;
   letter-spacing: 0.08em;
   font-family: 'JetBrains Mono', monospace;
-  background: #000;
-  color: #FFF;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
   padding: 2px 6px;
   border-radius: 2px;
 }
@@ -420,15 +422,15 @@ onMounted(fetchComparison)
   letter-spacing: 0.05em;
 }
 
-.status-completed  { background: #F2FAF6; color: #1A936F; }
-.status-running    { background: #FFFBF0; color: #D97706; }
-.status-failed     { background: #FEF2F2; color: #E74C3C; }
-.status-pending    { background: #F5F5F5; color: #999; }
+.status-completed  { background: rgba(34, 197, 94, 0.12); color: #22c55e; }
+.status-running    { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+.status-failed     { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+.status-pending    { background: rgba(255, 255, 255, 0.05); color: #a0a0b0; }
 
 /* Branch description */
 .branch-desc {
   font-size: 12px;
-  color: #666;
+  color: #a0a0b0;
   line-height: 1.5;
   margin-bottom: 12px;
 }
@@ -452,19 +454,19 @@ onMounted(fetchComparison)
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #BBB;
+  color: #666;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .stat-val {
   font-size: 13px;
   font-weight: 600;
-  color: #000;
+  color: #f0f0f0;
 }
 
-.val-positive { color: #1A936F; }
-.val-negative { color: #E74C3C; }
-.val-neutral  { color: #666; }
+.val-positive { color: #22c55e; }
+.val-negative { color: #ef4444; }
+.val-neutral  { color: #a0a0b0; }
 
 /* Action pills */
 .action-pills {
@@ -477,14 +479,15 @@ onMounted(fetchComparison)
 .action-pill {
   font-size: 9px;
   font-family: 'JetBrains Mono', monospace;
-  background: #F0F0F0;
-  color: #555;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
   padding: 2px 6px;
   border-radius: 2px;
   letter-spacing: 0.03em;
 }
 
-.action-pill strong { color: #000; }
+.action-pill strong { color: #f0f0f0; }
 
 /* Top posts */
 .top-posts { margin-bottom: 8px; }
@@ -494,24 +497,24 @@ onMounted(fetchComparison)
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-family: 'JetBrains Mono', monospace;
-  color: #CCC;
+  color: #666;
   margin-bottom: 6px;
 }
 
 .post-preview {
   font-size: 11px;
-  color: #555;
+  color: #a0a0b0;
   line-height: 1.45;
   font-style: italic;
   padding: 4px 8px;
-  border-left: 2px solid #EAEAEA;
+  border-left: 2px solid rgba(255, 255, 255, 0.07);
   margin-bottom: 4px;
 }
 
 /* Branch error */
 .branch-error {
   font-size: 11px;
-  color: #E74C3C;
+  color: #ef4444;
   font-family: 'JetBrains Mono', monospace;
   margin-top: 8px;
 }
@@ -523,7 +526,7 @@ onMounted(fetchComparison)
 
 .summary-text {
   font-size: 13px;
-  color: #444;
+  color: #a0a0b0;
   line-height: 1.65;
   max-width: 720px;
 }
