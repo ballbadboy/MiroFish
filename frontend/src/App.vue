@@ -1,9 +1,21 @@
 <template>
   <router-view />
+  <ToastNotification ref="toastRef" />
 </template>
 
 <script setup>
-// 使用 Vue Router 来管理页面
+import { ref, provide } from 'vue'
+import ToastNotification from './components/ToastNotification.vue'
+
+const toastRef = ref(null)
+
+// Global toast — any component can inject('toast') and call show()
+provide('toast', {
+  success: (msg) => toastRef.value?.show(msg, 'success'),
+  error: (msg) => toastRef.value?.show(msg, 'error'),
+  info: (msg) => toastRef.value?.show(msg, 'info'),
+  warning: (msg) => toastRef.value?.show(msg, 'warning')
+})
 </script>
 
 <style>

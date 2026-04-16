@@ -13,9 +13,16 @@
       </div>
 
       <div class="nav-right">
-        <a class="nav-link" @click.prevent="router.push('/dashboard')">Dashboard</a>
-        <LanguageSwitcher />
-        <button class="btn-demo" @click="scrollTo('cta')">Request Demo</button>
+        <template v-if="isLoggedIn">
+          <a class="nav-link" @click.prevent="router.push('/dashboard')">Dashboard</a>
+          <span class="nav-user">{{ userName }}</span>
+          <button class="btn-ghost-sm" @click="logout(); router.push('/')">Sign Out</button>
+        </template>
+        <template v-else>
+          <LanguageSwitcher />
+          <button class="btn-ghost-sm" @click="router.push('/auth')">Sign In</button>
+          <button class="btn-demo" @click="scrollTo('cta')">Request Demo</button>
+        </template>
       </div>
     </nav>
 
@@ -287,6 +294,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useAuth } from '../store/auth'
+
+const { isLoggedIn, userName, logout } = useAuth()
 
 const router = useRouter()
 const heroCanvas = ref(null)
@@ -431,6 +441,13 @@ onUnmounted(() => {
   cursor: pointer; transition: opacity 0.2s, transform 0.2s;
 }
 .btn-demo:hover { opacity: 0.88; transform: translateY(-1px); }
+.nav-user { font-size: 0.82rem; color: var(--accent-lt); font-family: var(--mono); }
+.btn-ghost-sm {
+  background: transparent; color: var(--muted); border: 1px solid var(--border-str);
+  padding: 6px 16px; border-radius: 6px; font-family: var(--sans);
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+}
+.btn-ghost-sm:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
 
 /* Hero */
 .hero-section {
