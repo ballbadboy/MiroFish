@@ -59,6 +59,8 @@ class Config:
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
+    # ZEP_BASE_URL: ถ้าใส่ → ชี้ไป Zep CE local, ถ้าว่าง → ใช้ Zep Cloud default
+    ZEP_BASE_URL = os.environ.get('ZEP_BASE_URL')
     
     # 文件上传配置
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
