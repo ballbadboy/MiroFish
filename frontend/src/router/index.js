@@ -13,6 +13,7 @@ import SimulationRunView from '../views/SimulationRunView.vue'
 import ReportView from '../views/ReportView.vue'
 import InteractionView from '../views/InteractionView.vue'
 import Dashboard from '../views/Dashboard.vue'
+import DataSources from '../views/DataSources.vue'
 
 const routes = [
   {
@@ -42,6 +43,16 @@ const routes = [
       title: 'Dashboard — ENDORA',
       description: 'View your simulation history, track active runs, and access reports.',
       requiresAuth: true
+    }
+  },
+  {
+    path: '/data-sources',
+    name: 'DataSources',
+    component: DataSources,
+    meta: {
+      title: 'Data Sources — ENDORA',
+      description: 'Manage data connectors and live source integrations.',
+      requiresAuth: true,
     }
   },
   {

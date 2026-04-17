@@ -52,8 +52,8 @@
 
         <div class="hero-stats">
           <div class="stat-item">
-            <span class="stat-val">10M+</span>
-            <span class="stat-lbl">Agents</span>
+            <span class="stat-val">847K</span>
+            <span class="stat-lbl">Avg Agents</span>
           </div>
           <div class="stat-sep"></div>
           <div class="stat-item">
@@ -246,7 +246,7 @@
             <div class="plan-desc">For hospitals, governments, financial institutions, and defense contractors.</div>
             <ul class="plan-features">
               <li><span class="feat-check">✓</span> Unlimited simulations</li>
-              <li><span class="feat-check">✓</span> 10M+ agents per run</li>
+              <li><span class="feat-check">✓</span> Up to 1M+ agents per run</li>
               <li><span class="feat-check">✓</span> On-premise deployment</li>
               <li><span class="feat-check">✓</span> Custom LLM fine-tuning</li>
               <li><span class="feat-check">✓</span> SLA &amp; dedicated infra</li>
@@ -321,7 +321,7 @@ const capabilities = [
 ]
 
 const barStats = [
-  { val: '10,000,000+', label: 'agents per simulation' },
+  { val: '847,293',     label: 'avg agents per simulation' },
   { val: '< $5',        label: 'avg cost per simulation' },
   { val: '6',           label: 'industry verticals' },
   { val: '5-step',      label: 'automated pipeline' },

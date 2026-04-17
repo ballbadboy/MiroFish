@@ -4,7 +4,10 @@
     <!-- Navbar -->
     <nav class="navbar">
       <span class="nav-wordmark" @click="router.push('/')" style="cursor:pointer">ENDORA</span>
-      <span class="nav-center-label">DASHBOARD</span>
+      <div class="nav-center">
+        <span class="nav-center-label">DASHBOARD</span>
+        <router-link to="/data-sources" class="nav-link">Data Sources</router-link>
+      </div>
       <button class="btn-new" @click="router.push('/new')">+ New Simulation</button>
     </nav>
 
@@ -239,10 +242,29 @@ onMounted(async () => {
   font-size: 1.05rem; letter-spacing: 3px; color: #fff;
   user-select: none;
 }
+.nav-center {
+  display: flex; align-items: center; gap: 20px;
+}
 .nav-center-label {
   font-family: var(--mono); font-size: 0.72rem;
   font-variant: small-caps; letter-spacing: 0.18em;
   color: var(--muted);
+}
+.nav-link {
+  font-family: var(--sans); font-size: 0.82rem;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 12px; border-radius: 8px;
+  border: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.nav-link:hover {
+  color: var(--text);
+  border-color: rgba(99,102,241,0.3);
+  background: rgba(99,102,241,0.06);
+}
+.nav-link.router-link-active {
+  color: var(--accent-lt);
+  border-color: rgba(99,102,241,0.4);
 }
 .btn-new {
   background: var(--accent); color: #fff; border: none;
